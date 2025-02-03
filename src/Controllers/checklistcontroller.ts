@@ -14,8 +14,8 @@ export const getSingleChecklist = (
   res: Response,
   next: NextFunction
 ) => {
-  const user_id: number = Number(req.params.user_id);
-  const trip_id: number = Number(req.params.trip_id);
+  const user_id: string = req.params.user_id;
+  const trip_id: string = req.params.trip_id;
   const promises: Promise<Checklist[] | void>[] = [
     fetchSingleChecklist(user_id, trip_id),
   ];
@@ -42,8 +42,8 @@ export const postChecklist = (
   res: Response,
   next: NextFunction
 ) => {
-  const user_id: number = Number(req.params.user_id);
-  const trip_id: number = Number(req.params.trip_id);
+  const user_id: string =req.params.user_id;
+  const trip_id: string = req.params.trip_id;
   const postBody: any = req.body;
 
   const promises: Promise<Checklist[] | void>[] = [
@@ -72,8 +72,8 @@ export const updateChecklistItems = (
   res: Response,
   next: NextFunction
 ) => {
-  const user_id: number = Number(req.params.user_id);
-  const trip_id: number = Number(req.params.trip_id);
+  const user_id: string = req.params.user_id;
+  const trip_id: string = req.params.trip_id;
   const postBody: string = req.body.newItem;
 
   const promises: Promise<Checklist[] | void>[] = [
@@ -102,8 +102,8 @@ export const deleteSingleItemFromItems = (
   res: Response,
   next: NextFunction
 ) => {
-  const user_id: number = Number(req.params.user_id);
-  const trip_id: number = Number(req.params.trip_id);
+  const user_id: string = req.params.user_id;
+  const trip_id: string = req.params.trip_id;
   const deleteBody: string = req.body.item;
 
   const promises: Promise<Checklist[] | void>[] = [
@@ -133,8 +133,8 @@ export const removeEntireChecklist = (
 	res: Response,
 	next: NextFunction
 ) => {
-	const user_id: number = Number(req.params.user_id);
-	const trip_id: number = Number(req.params.trip_id);
+  const user_id: string = req.params.user_id;
+  const trip_id: string = req.params.trip_id;
 	const promises: Promise<number | void | null>[] = [
 		deleteEntireChecklist(user_id, trip_id),
 	];

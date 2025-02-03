@@ -22,3 +22,4 @@ const usersData = [
         name: 'onur',
     },
 ];
+exports.default = usersData;

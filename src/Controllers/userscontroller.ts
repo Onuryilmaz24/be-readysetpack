@@ -28,7 +28,7 @@ export const getSingleUser = (
 	res: Response,
 	next: NextFunction
 ) => {
-	const user_id: number = Number(req.params.user_id);
+	const user_id: string = req.params.user_id;
 	const promises: Promise<Users | void>[] = [fetchSingleUser(user_id)];
 
 	if (user_id) {
@@ -45,7 +45,7 @@ export const getSingleUser = (
 };
 
 export const deleteUser = (req: Request, res: Response, next: NextFunction) => {
-	const user_id: number = Number(req.params.user_id);
+	const user_id: string = req.params.user_id;
 	const promises: Promise<number | void | null>[] = [removeUser(user_id)];
 
 	if (user_id) {
@@ -78,7 +78,7 @@ export const changeUserInfo = (
 	next: NextFunction
 ) => {
 	const postBody = req.body;
-	const user_id: number = Number(req.params.user_id);
+	const user_id: string = req.params.user_id;
 
 	const promises: Promise<Users | void>[] = [updateUser(user_id, postBody)];
 

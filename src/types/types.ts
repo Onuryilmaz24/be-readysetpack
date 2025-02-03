@@ -1,13 +1,19 @@
 // main-types
 type Users = {
-	user_id?: number;
+	user_id?: string;
 	username: string;
 	name: string;
 };
+type UsersTest = {
+	user_id?: string;
+	username?: string;
+	name?: string;
+};
 
 type Trips = {
-	trip_id?: number;
-	user_id: number;
+	trip_id?: string;
+	user_id?: string;
+	username:string;
 	destination: Destination;
 	start_date: string;
 	end_date: string;
@@ -22,12 +28,38 @@ type Trips = {
 	events: Events[];
 	daily_expected_cost: number;
 };
+type TripsTest = {
+	trip_id?: string;
+	user_id?: string;
+	username?:string;
+	destination?: Destination;
+	start_date?: string;
+	end_date?: string;
+	passport_issued_country?: string;
+	weather?: Weather;
+	visa_type?: string;
+	budget?: Budget;
+	is_booked_hotel?: boolean;
+	people_count?: number;
+	city_information?: string;
+	landmarks?: Landmarks;
+	events?: Events[];
+	daily_expected_cost?: number;
+};
 
 type Checklist = {
-	checklist_id?: number;
-	trip_id: number;
-	user_id: number;
+	checklist_id?: string;
+	trip_id?: string;
+	user_id?: string;
+	username:string;
 	items: string[];
+};
+type ChecklistTest = {
+	checklist_id?: string;
+	trip_id?: string;
+	user_id?: string;
+	username?:string;
+	items?: string[];
 };
 
 type DailyExpectedCost = {
@@ -77,4 +109,7 @@ export {
 	Budget,
 	Landmarks,
 	Events,
+	UsersTest,
+	TripsTest,
+	ChecklistTest
 };

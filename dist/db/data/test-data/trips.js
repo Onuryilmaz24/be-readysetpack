@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tripsData = [
     {
-        user_id: 1,
+        username: "alex123",
         destination: {
             city: 'Paris',
             country: 'FR',
@@ -41,7 +41,7 @@ const tripsData = [
         daily_expected_cost: 200,
     },
     {
-        user_id: 2,
+        username: "matthew123",
         destination: {
             city: 'Berlin',
             country: 'DE',
@@ -80,7 +80,7 @@ const tripsData = [
         daily_expected_cost: 200,
     },
     {
-        user_id: 1,
+        username: "onur123",
         destination: {
             city: 'Amsterdam',
             country: 'NL',

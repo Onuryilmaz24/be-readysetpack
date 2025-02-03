@@ -62,7 +62,7 @@ const updateUser = (user_id, postBody) => {
         return `${field} = $${index + 1}`;
     })
         .join(`, `);
-    values.push(Number(user_id));
+    values.push(user_id);
     const updateQuery = `
     UPDATE users
     SET ${setClause}

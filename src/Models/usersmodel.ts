@@ -7,16 +7,16 @@ export const fetchAllUsers = () => {
 	});
 };
 
-export const fetchSingleUser = (user_id: number) => {
+export const fetchSingleUser = (user_id: string) => {
 	const sqlText: string = `SELECT * FROM users WHERE user_id = $1`;
-	const values: number[] = [user_id];
+	const values: string[] = [user_id];
 
 	return db.query(sqlText, values).then(({ rows }) => {
 		return rows[0];
 	});
 };
 
-export const removeUser = (user_id: number) => {
+export const removeUser = (user_id: string) => {
 	const sqlText: string = `DELETE FROM users WHERE user_id = $1`;
 	const values = [user_id];
 
@@ -48,7 +48,7 @@ export const addUser = (postBody: Users) => {
 	});
 };
 
-export const updateUser = (user_id: number, postBody: Users) => {
+export const updateUser = (user_id: string, postBody: Users) => {
 	const { name } = postBody;
 	const values = Object.values(postBody);
 	const updateFields = Object.keys(postBody);
@@ -70,7 +70,7 @@ export const updateUser = (user_id: number, postBody: Users) => {
 		})
 		.join(`, `);
 
-	values.push(Number(user_id));
+	values.push(user_id);
 
 	const updateQuery: string = `
     UPDATE users

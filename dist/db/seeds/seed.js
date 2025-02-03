@@ -19,8 +19,9 @@ const seed = ({ usersData, tripsData, costsData, checklistData, }) => {
     })
         .then(() => {
         const usersTablePromise = connection_1.default.query(`
+				CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
                 CREATE TABLE users (
-                    user_id SERIAL PRIMARY KEY,
+                    user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                     username VARCHAR NOT NULL,
                     name VARCHAR NOT NULL
                 );`);
@@ -34,8 +35,8 @@ const seed = ({ usersData, tripsData, costsData, checklistData, }) => {
         .then(() => {
         return connection_1.default.query(`
               CREATE TABLE trips (
-                trip_id SERIAL PRIMARY KEY,
-                user_id INT REFERENCES users(user_id) ON DELETE CASCADE NOT NULL,
+               	trip_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
                 destination JSONB,
                 start_date VARCHAR NOT NULL,
                 end_date VARCHAR NOT NULL,
@@ -55,9 +56,9 @@ const seed = ({ usersData, tripsData, costsData, checklistData, }) => {
         .then(() => {
         return connection_1.default.query(`
                 CREATE TABLE checklist (
-                    checklist_id SERIAL PRIMARY KEY,
-                    trip_id INT REFERENCES trips(trip_id) ON DELETE CASCADE NOT NULL,
-                    user_id INT REFERENCES users(user_id) ON DELETE CASCADE NOT NULL,
+                    checklist_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                    trip_id UUID REFERENCES trips(trip_id) ON DELETE CASCADE NOT NULL,
+                    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE NOT NULL,
                     items JSONB
                 );  
                 `);
@@ -69,9 +70,12 @@ const seed = ({ usersData, tripsData, costsData, checklistData, }) => {
         ]);
         const insertUsersQueryStr = (0, pg_format_1.default)(`
                 INSERT INTO users(username, name)
-                VALUES %L;
+                VALUES %L
+				RETURNING *;
                 `, userValues);
-        const userPromise = connection_1.default.query(insertUsersQueryStr);
+        const userPromise = connection_1.default.query(insertUsersQueryStr).then(result => {
+            return result;
+        });
         const costValues = costsData.map(({ country, daily_cost_in_dollars }) => [
             country,
             daily_cost_in_dollars,
@@ -83,9 +87,14 @@ const seed = ({ usersData, tripsData, costsData, checklistData, }) => {
         const costPromise = connection_1.default.query(insertDailyCostQueryStr);
         return Promise.all([userPromise, costPromise]);
     })
-        .then(() => {
-        const tripValues = tripsData.map(({ user_id, destination, start_date, end_date, passport_issued_country, weather, visa_type, budget, is_booked_hotel, people_count, city_information, landmarks, events, daily_expected_cost, }) => [
-            user_id,
+        .then(([userResult]) => {
+        const users = userResult.rows;
+        const usernameToUserId = users.reduce((acc, { username, user_id }) => {
+            acc[username] = user_id;
+            return acc;
+        }, {});
+        const tripValues = tripsData.map(({ username, destination, start_date, end_date, passport_issued_country, weather, visa_type, budget, is_booked_hotel, people_count, city_information, landmarks, events, daily_expected_cost, }) => [
+            usernameToUserId[username],
             JSON.stringify(destination),
             start_date,
             end_date,
@@ -115,20 +124,34 @@ const seed = ({ usersData, tripsData, costsData, checklistData, }) => {
 					landmarks,
 					events,
 					daily_expected_cost)
-                    VALUES %L;
+                    VALUES %L
+					RETURNING *;
                 `, tripValues);
-        return connection_1.default.query(insertTripsQueryStr);
+        return connection_1.default.query(insertTripsQueryStr).then(({ rows: trips }) => {
+            return { trips, usernameToUserId };
+        });
     })
-        .then(() => {
-        const checklistValues = checklistData.map(({ trip_id, user_id, items }) => [
-            trip_id,
-            user_id,
-            JSON.stringify(items),
-        ]);
-        const insertChecklistQueryStr = (0, pg_format_1.default)(`
-                    INSERT INTO checklist (trip_id, user_id, items)
-                    VALUES %L; 
-                `, checklistValues);
+        .then(({ trips, usernameToUserId }) => {
+        const tripToUsername = trips.reduce((acc, { trip_id, user_id }) => {
+            if (trip_id && user_id) {
+                acc[trip_id] = user_id;
+            }
+            return acc;
+        }, {});
+        const checklistValues = checklistData.map(({ username, items }) => {
+            const user_id = usernameToUserId[username];
+            const trip_id = Object.keys(tripToUsername).find((key) => tripToUsername[key] === user_id);
+            if (!trip_id) {
+                console.warn(`Missing trip_id for username: ${username}`);
+                return null;
+            }
+            return [trip_id, user_id, JSON.stringify(items)];
+        }).filter(Boolean);
+        if (checklistValues.length === 0) {
+            console.warn("No valid checklist entries found. Skipping insert.");
+            return;
+        }
+        const insertChecklistQueryStr = (0, pg_format_1.default)(`INSERT INTO checklist (trip_id, user_id, items) VALUES %L;`, checklistValues);
         return connection_1.default.query(insertChecklistQueryStr);
     });
 };

@@ -73,7 +73,7 @@ const changeTripData = (user_id, trip_id, postBody) => {
         return `${field} = $${index + 1}`;
     })
         .join(', ');
-    values.push(Number(trip_id), Number(user_id));
+    values.push(trip_id, user_id);
     const sqlText = `UPDATE trips SET ${setClause} 
   WHERE trip_id = $${values.length - 1} 
   AND user_id = $${values.length} 

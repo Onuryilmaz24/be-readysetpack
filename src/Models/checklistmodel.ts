@@ -1,15 +1,15 @@
 import db from '../db/connection';
 
-export const fetchSingleChecklist = (user_id: number, trip_id: number) => {
+export const fetchSingleChecklist = (user_id: string, trip_id: string) => {
 	const sqlText: string = `SELECT * FROM checklist WHERE user_id = $1 AND trip_id = $2;`;
-	const values: number[] = [user_id, trip_id];
+	const values: string[] = [user_id, trip_id];
 
 	return db.query(sqlText, values).then(({ rows }) => {
 		return rows[0];
 	});
 };
 
-export const addChecklist = (user_id: number, trip_id: number) => {
+export const addChecklist = (user_id: string, trip_id: string) => {
 	const sqlText: string = `INSERT INTO checklist(user_id,trip_id,items) VALUES($1,$2,$3) RETURNING*;`;
 
 	const items: string[] = [
@@ -31,8 +31,8 @@ export const addChecklist = (user_id: number, trip_id: number) => {
 };
 
 export const addItemsToChecklist = (
-	user_id: number,
-	trip_id: number,
+	user_id: string,
+	trip_id: string,
 	postBody: string
 ) => {
 	const values = [postBody, user_id, trip_id];
@@ -50,8 +50,8 @@ export const addItemsToChecklist = (
 };
 
 export const removeSingleItemFromItemsArray = (
-	user_id: number,
-	trip_id: number,
+	user_id: string,
+	trip_id: string,
 	deleteBody: string
 ) => {
 	const values = [deleteBody, user_id, trip_id];
@@ -72,7 +72,7 @@ export const removeSingleItemFromItemsArray = (
 	});
 };
 
-export const deleteEntireChecklist = (user_id: number, trip_id: number) => {
+export const deleteEntireChecklist = (user_id: string, trip_id: string) => {
 	const values = [user_id, trip_id];
 	const sqlText: string = `DELETE FROM checklist WHERE user_id = $1 AND trip_id = $2`;
 
