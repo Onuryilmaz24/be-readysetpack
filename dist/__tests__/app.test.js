@@ -149,6 +149,24 @@ describe('POST api/users', () => {
             });
         });
     });
+    test('201: Should post a new user', () => {
+        const userData = {
+            user_id: "e9b0f6e4-5f29-4e18-ae4d-3372e8ed6946",
+            username: 'alexonur',
+            name: 'Alex Onur',
+        };
+        return (0, supertest_1.default)(app_1.default)
+            .post('/api/users')
+            .send(userData)
+            .expect(201)
+            .then(({ body: { user } }) => {
+            expect(user).toEqual({
+                user_id: "e9b0f6e4-5f29-4e18-ae4d-3372e8ed6946",
+                username: 'alexonur',
+                name: 'Alex Onur',
+            });
+        });
+    });
     test('400: Responds with bad request when post body has more properties than allowed', () => {
         const userData = {
             user_id: "9",

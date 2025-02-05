@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateUser = exports.addUser = exports.removeUser = exports.fetchSingleUser = exports.fetchAllUsers = void 0;
 const connection_1 = __importDefault(require("../db/connection"));
 const fetchAllUsers = () => {
-    return connection_1.default.query('SELECT * FROM users;').then(({ rows }) => {
+    return connection_1.default.query("SELECT * FROM users;").then(({ rows }) => {
         return rows;
     });
 };
@@ -28,34 +28,44 @@ const removeUser = (user_id) => {
 };
 exports.removeUser = removeUser;
 const addUser = (postBody) => {
-    const { username, name } = postBody;
-    const validColumns = ['username', 'name'];
+    const { user_id, username, name } = postBody;
+    const validColumns = ["user_id", "username", "name"];
     if (!Object.keys(postBody).every((key) => validColumns.includes(key))) {
-        return Promise.reject({ statusCode: 400, message: 'Bad Request' });
+        return Promise.reject({ statusCode: 400, message: "Bad Request" });
     }
     const nameRegex = /\d/i;
     if (nameRegex.test(name)) {
-        return Promise.reject({ statusCode: 400, message: 'Bad Request' });
+        return Promise.reject({ statusCode: 400, message: "Bad Request" });
     }
-    let sqlInsertQuery = `INSERT INTO users (username, name)
+    if (!user_id) {
+        let sqlInsertQuery = `INSERT INTO users (username, name)
 	VALUES ($1, $2) RETURNING *;`;
-    const values = [username, name];
-    return connection_1.default.query(sqlInsertQuery, values).then(({ rows }) => {
-        return rows[0];
-    });
+        const values = [username, name];
+        return connection_1.default.query(sqlInsertQuery, values).then(({ rows }) => {
+            return rows[0];
+        });
+    }
+    else {
+        let sqlInsertQuery = `INSERT INTO users (user_id,username, name)
+	VALUES ($1, $2,$3) RETURNING *;`;
+        const values = [user_id, username, name];
+        return connection_1.default.query(sqlInsertQuery, values).then(({ rows }) => {
+            return rows[0];
+        });
+    }
 };
 exports.addUser = addUser;
 const updateUser = (user_id, postBody) => {
     const { name } = postBody;
     const values = Object.values(postBody);
     const updateFields = Object.keys(postBody);
-    const validColumns = ['username', 'name'];
+    const validColumns = ["username", "name"];
     if (!Object.keys(postBody).every((key) => validColumns.includes(key))) {
-        return Promise.reject({ statusCode: 400, message: 'Bad Request' });
+        return Promise.reject({ statusCode: 400, message: "Bad Request" });
     }
     const nameRegex = /\d/i;
     if (nameRegex.test(name)) {
-        return Promise.reject({ statusCode: 400, message: 'Bad Request' });
+        return Promise.reject({ statusCode: 400, message: "Bad Request" });
     }
     const setClause = updateFields
         .map((field, index) => {
