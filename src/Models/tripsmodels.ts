@@ -2,6 +2,7 @@ import db from '../db/connection';
 import fetchCityInfo from './utils/fetch-city-info';
 import { Trips } from '../types/types';
 import fetchExchangeRate from './utils/convert_currency';
+import visaCheck from './utils/visaCheck';
 
 export const fetchTripsByUserId = (
 	user_id: string,
@@ -28,7 +29,6 @@ export const createTrip = async (user_id: string, postBody: Trips) => {
 		end_date,
 		passport_issued_country,
 		weather,
-		visa_type,
 		budget,
 		is_booked_hotel,
 		people_count,
@@ -38,7 +38,7 @@ export const createTrip = async (user_id: string, postBody: Trips) => {
 	} = postBody;
 
 	const cityInfo = await fetchCityInfo(destination.city);
-
+	const visa_type = await visaCheck(destination.country,passport_issued_country)
 
 	const destination_amount = await fetchExchangeRate(
 		budget.current_currency,
