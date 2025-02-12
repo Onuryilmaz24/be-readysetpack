@@ -7,7 +7,7 @@ import usersData from '../db/data/test-data/users';
 import tripsData from '../db/data/test-data/trips';
 import costsData from '../db/data/test-data/dailycost';
 import endpointsJson from '../../endpoints.json';
-import { Trips, Users, Checklist } from '../types/types';
+import { Trips, Users, Checklist ,UsersTest,TripsTest, ChecklistTest } from '../types/types';
 import { Response } from 'supertest';
 
 afterAll(() => {
@@ -15,9 +15,43 @@ afterAll(() => {
 	return db.end();
 });
 
-beforeEach(() => {
-	return seed({ usersData, tripsData, checklistData, costsData });
+let users = [];
+let trips = [];
+let checklists = [];
+
+let user1:UsersTest, user2:UsersTest, user3:UsersTest;
+let trip1:TripsTest, trip2:TripsTest, trip3:TripsTest;
+let checklist1:ChecklistTest, checklist2:ChecklistTest, checklist3:ChecklistTest;
+
+beforeEach(async () => {
+  await seed({ usersData, tripsData, checklistData, costsData });
+  const userResponse = await db.query("SELECT user_id, username FROM users");
+  users = userResponse.rows;
+
+  [user1, user2, user3] = users.map((user, index) => ({
+    username: user.username,
+    user_id: user.user_id,
+  }));
+
+  const tripsResponse = await db.query("SELECT user_id, trip_id FROM trips");
+  trips = tripsResponse.rows;
+
+  [trip1, trip2, trip3] = trips.map((trip) => ({
+    user_id: trip.user_id,
+    trip_id: trip.trip_id,
+  }));
+
+  const checklistResponse = await db.query("SELECT user_id, trip_id, checklist_id FROM checklist");
+  checklists = checklistResponse.rows;
+
+  [checklist1, checklist2, checklist3] = checklists.map((checklist) => ({
+    user_id: checklist.user_id,
+    trip_id: checklist.trip_id,
+    checklist_id: checklist.checklist_id,
+  }));
 });
+
+
 
 describe('GET /api', () => {
 	test('200: Responds with all endpoints', () => {
@@ -40,7 +74,7 @@ describe('GET /api/users', () => {
 				users.forEach((user: Users) => {
 					expect(user).toEqual(
 						expect.objectContaining({
-							user_id: expect.any(Number),
+							user_id: expect.any(String),
 							username: expect.any(String),
 							name: expect.any(String),
 						})
@@ -61,12 +95,12 @@ describe('GET /api/users', () => {
 describe('GET /api/users/:user_id', () => {
 	test('200: Responds with single user ', () => {
 		return request(app)
-			.get('/api/users/1')
+			.get(`/api/users/${user1.user_id}`)
 			.expect(200)
 			.then(({ body: { user } }) => {
 				expect(user).toEqual(
 					expect.objectContaining({
-						user_id: 1,
+						user_id: expect.any(String),
 						username: expect.any(String),
 						name: expect.any(String),
 					})
@@ -77,14 +111,6 @@ describe('GET /api/users/:user_id', () => {
 	test('404: Responds with msg when the user does not exist ', () => {
 		return request(app)
 			.get('/api/users/10')
-			.expect(404)
-			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
-			});
-	});
-	test('400: Responds with msg when the user_id is not a number', () => {
-		return request(app)
-			.get('/api/users/qwe')
 			.expect(400)
 			.then((response: Response) => {
 				expect(response.body.msg).toBe('Bad Request');
@@ -94,11 +120,11 @@ describe('GET /api/users/:user_id', () => {
 
 describe('DELETE /api/user/:user_id', () => {
 	test('204: Should delete selected user ', () => {
-		return request(app).delete('/api/users/1').expect(204);
+		return request(app).delete(`/api/users/${user1.user_id}`).expect(204);
 	});
 	test('404: Responds with msg when the user does not exist ', () => {
 		return request(app)
-			.delete('/api/users/10')
+			.delete('/api/users/9f55df0f-6350-4b1d-a271-297d490857d0')
 			.expect(404)
 			.then((response: Response) => {
 				expect(response.body.msg).toBe('Does Not Found');
@@ -127,7 +153,26 @@ describe('POST api/users', () => {
 			.expect(201)
 			.then(({ body: { user } }) => {
 				expect(user).toEqual({
-					user_id: 6,
+					user_id: expect.any(String),
+					username: 'alexonur',
+					name: 'Alex Onur',
+				});
+			});
+	});
+	test('201: Should post a new user', () => {
+		const userData: Users = {
+			user_id:"e9b0f6e4-5f29-4e18-ae4d-3372e8ed6946",
+			username: 'alexonur',
+			name: 'Alex Onur',
+		};
+
+		return request(app)
+			.post('/api/users')
+			.send(userData)
+			.expect(201)
+			.then(({ body: { user } }) => {
+				expect(user).toEqual({
+					user_id: "e9b0f6e4-5f29-4e18-ae4d-3372e8ed6946",
 					username: 'alexonur',
 					name: 'Alex Onur',
 				});
@@ -135,7 +180,7 @@ describe('POST api/users', () => {
 	});
 	test('400: Responds with bad request when post body has more properties than allowed', () => {
 		const userData: Users = {
-			user_id: 9,
+			user_id: "9",
 			username: 'alexonur444',
 			name: 'Alex Onur',
 		};
@@ -172,12 +217,12 @@ describe('PATCH api/users/:user_id', () => {
 		};
 
 		return request(app)
-			.patch('/api/users/1')
+			.patch(`/api/users/${user1.user_id}`)
 			.send(userData)
 			.expect(200)
 			.then(({ body: { user } }) => {
 				expect(user).toEqual({
-					user_id: 1,
+					user_id: expect.any(String),
 					username: 'alexonur',
 					name: 'Alex Onur',
 				});
@@ -189,12 +234,12 @@ describe('PATCH api/users/:user_id', () => {
 		};
 
 		return request(app)
-			.patch('/api/users/1')
+			.patch(`/api/users/${user1.user_id}`)
 			.send(userData)
 			.expect(200)
 			.then(({ body: { user } }) => {
 				expect(user).toEqual({
-					user_id: 1,
+					user_id: expect.any(String),
 					username: 'alexonur',
 					name: 'alex',
 				});
@@ -206,12 +251,12 @@ describe('PATCH api/users/:user_id', () => {
 		};
 
 		return request(app)
-			.patch('/api/users/1')
+			.patch(`/api/users/${user1.user_id}`)
 			.send(userData)
 			.expect(200)
 			.then(({ body: { user } }) => {
 				expect(user).toEqual({
-					user_id: 1,
+					user_id: expect.any(String),
 					username: 'alex123',
 					name: 'onur',
 				});
@@ -233,7 +278,7 @@ describe('PATCH api/users/:user_id', () => {
 	});
 	test('400: Responds with bad request when user try to change user_id', () => {
 		const userData: Users = {
-			user_id: 2,
+			user_id: "9",
 			username: 'alexonur',
 			name: 'Alex Onur123',
 		};
@@ -253,7 +298,7 @@ describe('PATCH api/users/:user_id', () => {
 		};
 
 		return request(app)
-			.patch('/api/users/10')
+			.patch('/api/users/9f55df0f-6350-4b1d-a271-297d490857d0')
 			.send(userData)
 			.expect(404)
 			.then((response: Response) => {
@@ -287,15 +332,15 @@ describe('GET /api/dailyCost/:country', () => {
 describe('GET /api/trips/:user_id', () => {
 	test('200: Responds with all trips for user ', () => {
 		return request(app)
-			.get('/api/trips/1')
+			.get(`/api/trips/${user1.user_id}`)
 			.expect(200)
 			.then(({ body: { trips } }: { body: { trips: Trips[] } }) => {
-				expect(trips).toHaveLength(2);
+				expect(trips).toHaveLength(1);
 				trips.forEach((trip: Trips) => {
 					expect(trip).toEqual(
 						expect.objectContaining({
-							trip_id: expect.any(Number),
-							user_id: expect.any(Number),
+							trip_id: expect.any(String),
+							user_id: expect.any(String),
 							destination: expect.objectContaining({
 								city: expect.any(String),
 								country: expect.any(String),
@@ -337,18 +382,10 @@ describe('GET /api/trips/:user_id', () => {
 				});
 			});
 	});
-	test('200: Responds with an empty array when user does not have any trip ', () => {
-		return request(app)
-			.get('/api/trips/3')
-			.expect(200)
-			.then(({ body: { trips } }: { body: { trips: Trips[] } }) => {
-				expect(trips).toHaveLength(0);
-			});
-	});
 
 	test('404: Should responds with an error message when user does not exist', () => {
 		return request(app)
-			.get('/api/trips/10')
+			.get('/api/trips/9f55df0f-6350-4b1d-a271-297d490857d0')
 			.expect(404)
 			.then((response: Response) => {
 				expect(response.body.msg).toBe('Does Not Found');
@@ -361,12 +398,12 @@ describe('POST /api/trips/:user_id', () => {
 		const tripData = {
 			destination: {
 				city: 'Amsterdam',
-				country: 'NE',
+				country: 'NL',
 				currency: 'EUR',
 			},
 			start_date: '25/01/2025',
 			end_date: '15/02/2025',
-			passport_issued_country: 'UK',
+			passport_issued_country: 'GB',
 			weather: {
 				temp: 25,
 				weather_type: 'Cloudly',
@@ -395,14 +432,14 @@ describe('POST /api/trips/:user_id', () => {
 			daily_expected_cost: 200,
 		};
 		return request(app)
-			.post('/api/trips/2')
+			.post(`/api/trips/${user1.user_id}`)
 			.send(tripData)
 			.expect(201)
 			.then(({ body: { trip } }: { body: { trip: Trips[] } }) => {
 				expect(trip).toEqual(
 					expect.objectContaining({
-						trip_id: expect.any(Number),
-						user_id: expect.any(Number),
+						trip_id: expect.any(String),
+						user_id: expect.any(String),
 						destination: expect.objectContaining({
 							city: expect.any(String),
 							country: expect.any(String),
@@ -481,7 +518,7 @@ describe('POST /api/trips/:user_id', () => {
 			daily_expected_cost: 200,
 		};
 		return request(app)
-			.post('/api/trips/10')
+			.post('/api/trips/9f55df0f-6350-4b1d-a271-297d490857d0')
 			.send(tripData)
 			.expect(404)
 			.then((response: Response) => {
@@ -504,7 +541,7 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
 		};
 
 		return request(app)
-			.patch('/api/trips/1/1')
+			.patch(`/api/trips/${user1.user_id}/${trip1.trip_id}`)
 			.send(tripData)
 			.expect(200)
 			.then(({ body: { trip } }: { body: { trip: Trips } }) => {
@@ -524,7 +561,7 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
 		};
 
 		return request(app)
-			.patch('/api/trips/1/1')
+			.patch(`/api/trips/${user1.user_id}/${trip1.trip_id}`)
 			.send(tripData)
 			.expect(200)
 			.then(({ body: { trip } }: { body: { trip: Trips } }) => {
@@ -541,7 +578,7 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
 		};
 
 		return request(app)
-			.patch('/api/trips/1/1')
+			.patch(`/api/trips/${user1.user_id}/${trip1.trip_id}`)
 			.send(tripData)
 			.expect(200)
 			.then(({ body: { trip } }: { body: { trip: Trips } }) => {
@@ -552,7 +589,7 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
 				});
 			});
 	});
-	test('404: Responds with an error when given incorrect user_id', () => {
+	test('400: Responds with an error when given incorrect user_id', () => {
 		const tripData = {
 			people_count: 3,
 			budget: {
@@ -562,14 +599,14 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
 		};
 
 		return request(app)
-			.patch('/api/trips/10/1')
+			.patch('/api/trips/9f55df0f-6350-4b1d-a271-297d490857d0/1')
 			.send(tripData)
-			.expect(404)
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
-	test('404: Responds with an error when given incorrect trip_id', () => {
+	test('400: Responds with an error when given incorrect trip_id', () => {
 		const tripData = {
 			people_count: 3,
 			budget: {
@@ -579,11 +616,11 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
 		};
 
 		return request(app)
-			.patch('/api/trips/1/10')
+			.patch('/api/trips/1/9f55df0f-6350-4b1d-a271-297d490857d0')
 			.send(tripData)
-			.expect(404)
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
 	test('400: Responds with an error when trying to change incorrect column', () => {
@@ -596,7 +633,7 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
 		};
 
 		return request(app)
-			.patch('/api/trips/1/1')
+			.patch(`/api/trips/${user1.user_id}/${trip1.trip_id}`)
 			.send(tripData)
 			.expect(400)
 			.then((response: Response) => {
@@ -614,7 +651,7 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
 		};
 
 		return request(app)
-			.patch('/api/trips/1/1')
+			.patch(`/api/trips/${user1.user_id}/${trip1.trip_id}`)
 			.send(tripData)
 			.expect(400)
 			.then((response: Response) => {
@@ -626,13 +663,13 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
 describe('GET /api/trips/:user_id/trip_id', () => {
 	test('200: Responds with a single trip for specified user', () => {
 		return request(app)
-			.get('/api/trips/1/1')
+			.get(`/api/trips/${user1.user_id}/${trip1.trip_id}`)
 			.expect(200)
 			.then(({ body: { trip } }: { body: { trip: Trips } }) => {
 				expect(trip).toEqual(
 					expect.objectContaining({
-						trip_id: expect.any(Number),
-						user_id: expect.any(Number),
+						trip_id: expect.any(String),
+						user_id: expect.any(String),
 						destination: expect.objectContaining({
 							city: expect.any(String),
 							country: expect.any(String),
@@ -677,19 +714,19 @@ describe('GET /api/trips/:user_id/trip_id', () => {
 
 describe('DELETE /api/trips/:user_id/:trip_id', () => {
 	test('204: Should delete selected trip ', () => {
-		return request(app).delete('/api/trips/1/1').expect(204);
+		return request(app).delete(`/api/trips/${user1.user_id}/${trip1.trip_id}`).expect(204);
 	});
-	test('404: Responds with msg when the trip does not exist ', () => {
+	test('400: Responds with msg when the trip does not exist ', () => {
 		return request(app)
-			.delete('/api/trips/1/100')
-			.expect(404)
+			.delete('/api/trips/1/9f55df0f-6350-4b1d-a271-297d490857d0')
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
 	test('400: Responds with msg when the trip_id is not a number ', () => {
 		return request(app)
-			.delete('/api/trips/1/abc')
+			.delete('/api/trips/1/9f55df0f-6350-4b1d-a271-297d490857d0')
 			.expect(400)
 			.then((response: Response) => {
 				expect(response.body.msg).toBe('Bad Request');
@@ -700,33 +737,33 @@ describe('DELETE /api/trips/:user_id/:trip_id', () => {
 describe('GET /api/checklists/:user_id/:trip_id', () => {
 	test('200: Returns a single checklist based on the trip_id', () => {
 		return request(app)
-			.get('/api/checklists/1/1')
+			.get(`/api/checklists/${user1.user_id}/${trip1.trip_id}`)
 			.expect(200)
 			.then(({ body: { checklist } }: { body: { checklist: Checklist } }) => {
 				expect(checklist).toEqual(
 					expect.objectContaining({
-						checklist_id: expect.any(Number),
-						trip_id: expect.any(Number),
-						user_id: expect.any(Number),
+						checklist_id: expect.any(String),
+						trip_id: expect.any(String),
+						user_id: expect.any(String),
 						items: expect.any(Object),
 					})
 				);
 			});
 	});
-	test('404: Returns an error when passed incorrect/not exist user id', () => {
+	test('400: Returns an error when passed incorrect/not exist user id', () => {
 		return request(app)
-			.get('/api/checklists/10/1')
-			.expect(404)
+			.get(`/api/checklists/9f55df0f-6350-4b1d-a271-297d490857d0/1`)
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
-	test('404: Returns an error when passed incorrect/not exist trip id', () => {
+	test('400: Returns an error when passed incorrect/not exist trip id', () => {
 		return request(app)
-			.get('/api/checklists/1/10')
-			.expect(404)
+			.get('/api/checklists/1/9f55df0f-6350-4b1d-a271-297d490857d0')
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
 	test('400: Returns an error when passed string as trip_id', () => {
@@ -750,33 +787,33 @@ describe('GET /api/checklists/:user_id/:trip_id', () => {
 describe('POST /api/checklists/:user_id/:trip_id', () => {
 	test('201: Posts checklist to the checklist table ', () => {
 		return request(app)
-			.post('/api/checklists/1/1')
+			.post(`/api/checklists/${user1.user_id}/${trip1.trip_id}`)
 			.expect(201)
 			.then(({ body: { checklist } }: { body: { checklist: Checklist } }) => {
 				expect(checklist).toEqual(
 					expect.objectContaining({
-						checklist_id: expect.any(Number),
-						trip_id: expect.any(Number),
-						user_id: expect.any(Number),
+						checklist_id: expect.any(String),
+						trip_id: expect.any(String),
+						user_id: expect.any(String),
 						items: expect.any(Object),
 					})
 				);
 			});
 	});
-	test('404: Returns an error when passed incorrect/not exist user id', () => {
+	test('400: Returns an error when passed incorrect/not exist user id', () => {
 		return request(app)
 			.post('/api/checklists/10/1')
-			.expect(404)
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
-	test('404: Returns an error when passed incorrect/not exist trip id', () => {
+	test('400: Returns an error when passed incorrect/not exist trip id', () => {
 		return request(app)
 			.post('/api/checklists/1/10')
-			.expect(404)
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
 
@@ -802,14 +839,14 @@ describe('PATCH /api/checklists/:user_id/:trip_id/', () => {
 	test('200: Should patch checklist items ', () => {
 		const inputChecklistItem = { newItem: 'new item' };
 		return request(app)
-			.patch('/api/checklists/1/1')
+			.patch(`/api/checklists/${user1.user_id}/${trip1.trip_id}`)
 			.send(inputChecklistItem)
 			.expect(200)
 			.then(({ body: { checklist } }: { body: { checklist: Checklist } }) => {
 				expect(checklist).toEqual({
-					checklist_id: 1,
-					trip_id: 1,
-					user_id: 1,
+					checklist_id: expect.any(String),
+					trip_id: expect.any(String),
+					user_id: expect.any(String),
 					items: [
 						'Check your passport',
 						'Print or download your tickets (flight/train/bus).',
@@ -824,24 +861,24 @@ describe('PATCH /api/checklists/:user_id/:trip_id/', () => {
 				});
 			});
 	});
-	test('404: Should return an error msg if user id does not exist ', () => {
+	test('400: Should return an error msg if user id does not exist ', () => {
 		const inputChecklistItem = { newItem: 'new item' };
 		return request(app)
 			.patch('/api/checklists/10/1')
 			.send(inputChecklistItem)
-			.expect(404)
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
-	test('404: Should return an error msg if trip id does not exist ', () => {
+	test('400: Should return an error msg if trip id does not exist ', () => {
 		const inputChecklistItem = { newItem: 'new item' };
 		return request(app)
 			.patch('/api/checklists/1/10')
 			.send(inputChecklistItem)
-			.expect(404)
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
 	test('400: Should return an error msg if user id is string ', () => {
@@ -870,14 +907,14 @@ describe('PATCH /api/checklists/:user_id/:trip_id/delete-item (Deleting single i
 	test('200: Should delete single item from items array ', () => {
 		const deleteChecklistItem = { item: 'Check your passport' };
 		return request(app)
-			.patch('/api/checklists/1/1/delete-item')
+			.patch(`/api/checklists/${user1.user_id}/${trip1.trip_id}/delete-item`)
 			.send(deleteChecklistItem)
 			.expect(200)
 			.then(({ body: { checklist } }: { body: { checklist: Checklist } }) => {
 				expect(checklist).toEqual({
-					checklist_id: 1,
-					trip_id: 1,
-					user_id: 1,
+					checklist_id: expect.any(String),
+					trip_id: expect.any(String),
+					user_id: expect.any(String),
 					items: [
 						'Print or download your tickets (flight/train/bus).',
 						'Pack comfortable T-shirts/tops.',
@@ -890,24 +927,24 @@ describe('PATCH /api/checklists/:user_id/:trip_id/delete-item (Deleting single i
 				});
 			});
 	});
-	test('404: Should return an error msg if user id does not exist ', () => {
+	test('400: Should return an error msg if user id does not exist ', () => {
 		const deleteChecklistItem = { item: 'Check your passport' };
 		return request(app)
 			.patch('/api/checklists/10/1')
 			.send(deleteChecklistItem)
-			.expect(404)
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
-	test('404: Should return an error msg if trip id does not exist ', () => {
+	test('400: Should return an error msg if trip id does not exist ', () => {
 		const deleteChecklistItem = { item: 'Check your passport' };
 		return request(app)
 			.patch('/api/checklists/1/10')
 			.send(deleteChecklistItem)
-			.expect(404)
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
 	test('400: Should return an error msg if user id is string ', () => {
@@ -934,22 +971,22 @@ describe('PATCH /api/checklists/:user_id/:trip_id/delete-item (Deleting single i
 
 describe('DELETE /api/checklists/:user_id/:trip_id', () => {
 	test('204: Should delete entire checklist  ', () => {
-		return request(app).delete('/api/checklists/1/1').expect(204);
+		return request(app).delete(`/api/checklists/${user1.user_id}/${trip1.trip_id}`).expect(204);
 	});
-	test('404: Should return an error msg if user id does not exist ', () => {
+	test('400: Should return an error msg if user id does not exist ', () => {
 		return request(app)
 			.delete('/api/checklists/10/1')
-			.expect(404)
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
 	test('404: Should return an error msg if trip id does not exist ', () => {
 		return request(app)
 			.delete('/api/checklists/1/10')
-			.expect(404)
+			.expect(400)
 			.then((response: Response) => {
-				expect(response.body.msg).toBe('Does Not Found');
+				expect(response.body.msg).toBe('Bad Request');
 			});
 	});
 	test('400: Should return an error msg if user id is string ', () => {

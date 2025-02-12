@@ -14,7 +14,7 @@ const getAllUsers = (req, res, next) => {
 };
 exports.getAllUsers = getAllUsers;
 const getSingleUser = (req, res, next) => {
-    const user_id = Number(req.params.user_id);
+    const user_id = req.params.user_id;
     const promises = [(0, usersmodel_1.fetchSingleUser)(user_id)];
     if (user_id) {
         promises.push((0, api_utils_1.checkExist)('users', 'user_id', user_id));
@@ -29,7 +29,7 @@ const getSingleUser = (req, res, next) => {
 };
 exports.getSingleUser = getSingleUser;
 const deleteUser = (req, res, next) => {
-    const user_id = Number(req.params.user_id);
+    const user_id = req.params.user_id;
     const promises = [(0, usersmodel_1.removeUser)(user_id)];
     if (user_id) {
         promises.push((0, api_utils_1.checkExist)('users', 'user_id', user_id));
@@ -56,7 +56,7 @@ const postUser = (req, res, next) => {
 exports.postUser = postUser;
 const changeUserInfo = (req, res, next) => {
     const postBody = req.body;
-    const user_id = Number(req.params.user_id);
+    const user_id = req.params.user_id;
     const promises = [(0, usersmodel_1.updateUser)(user_id, postBody)];
     if (user_id) {
         promises.push((0, api_utils_1.checkExist)('users', 'user_id', user_id));

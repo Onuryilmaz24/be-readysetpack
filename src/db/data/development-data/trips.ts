@@ -2,7 +2,7 @@ import { Trips, Destination } from '../../../types/types';
 
 const tripsData: Trips[] = [
 	{
-		user_id: 1,
+		username: "alex123" ,
 		destination: {
 			city: 'Paris',
 			country: 'FR',
@@ -41,7 +41,7 @@ const tripsData: Trips[] = [
 		daily_expected_cost: 200,
 	},
 	{
-		user_id: 2,
+		username: "matthew123",
 		destination: {
 			city: 'Berlin',
 			country: 'DE',
@@ -80,7 +80,7 @@ const tripsData: Trips[] = [
 		daily_expected_cost: 200,
 	},
 	{
-		user_id: 1,
+		username: "onur123",
 		destination: {
 			city: 'Amsterdam',
 			country: 'NL',
@@ -119,3 +119,5 @@ const tripsData: Trips[] = [
 		daily_expected_cost: 200,
 	},
 ];
+
+export default tripsData;

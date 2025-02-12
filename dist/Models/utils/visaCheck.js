@@ -12,14 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkExist = void 0;
-const pg_format_1 = __importDefault(require("pg-format"));
-const connection_1 = __importDefault(require("../db/connection"));
-const checkExist = (table, column, value) => __awaiter(void 0, void 0, void 0, function* () {
-    const queryStr = (0, pg_format_1.default)("SELECT * FROM %I WHERE %I = $1", table, column);
-    const dbOutput = yield connection_1.default.query(queryStr, [value]);
-    if (dbOutput.rows.length === 0) {
-        return Promise.reject({ statusCode: 404, message: "Does Not Found" });
-    }
+const axios_1 = __importDefault(require("axios"));
+const visaApi = axios_1.default.create({
+    baseURL: "https://rough-sun-2523.fly.dev/"
 });
-exports.checkExist = checkExist;
+function visaCheck(destinationCountry, passportCountry) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return visaApi
+            .get(`/visa/${passportCountry}/${destinationCountry}`)
+            .then(({ data }) => data.category.name);
+    });
+}
+exports.default = visaCheck;

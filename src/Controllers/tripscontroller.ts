@@ -14,7 +14,7 @@ export const getTripsByUserId = (
 	res: Response,
 	next: NextFunction
 ) => {
-	const user_id: number = Number(req.params.user_id);
+	const user_id: string = req.params.user_id;
 	const promises: Promise<Trips[] | void>[] = [fetchTripsByUserId(user_id)];
 
 	if (user_id) {
@@ -31,7 +31,7 @@ export const getTripsByUserId = (
 };
 
 export const addTrip = (req: Request, res: Response, next: NextFunction) => {
-	const user_id: number = Number(req.params.user_id);
+	const user_id: string = req.params.user_id;
 	const postBody: Trips = req.body;
 	const promises: Promise<Trips[] | void>[] = [createTrip(user_id, postBody)];
 
@@ -52,8 +52,8 @@ export const updateTripData = (
 	res: Response,
 	next: NextFunction
 ) => {
-	const user_id = Number(req.params.user_id);
-	const trip_id = Number(req.params.trip_id);
+	const user_id: string = req.params.user_id;
+	const trip_id: string = req.params.trip_id;
 	const postBody: Trips = req.body;
 	const promises: Promise<Trips[] | void>[] = [
 		changeTripData(user_id, trip_id, postBody),
@@ -81,8 +81,8 @@ export const getSingleTrip = (
 	res: Response,
 	next: NextFunction
 ) => {
-	const user_id: number = Number(req.params.user_id);
-	const trip_id: number = Number(req.params.trip_id);
+	const user_id: string = req.params.user_id;
+	const trip_id: string = req.params.trip_id;
 	const promises: Promise<Trips[] | void>[] = [
 		fetchSingleTrip(user_id, trip_id),
 	];
@@ -108,8 +108,8 @@ export const removeSingleTrip = (
 	res: Response,
 	next: NextFunction
 ) => {
-	const user_id: number = Number(req.params.user_id);
-	const trip_id: number = Number(req.params.trip_id);
+	const user_id: string = req.params.user_id;
+	const trip_id: string = req.params.trip_id;
 	const promises: Promise<number | void | null>[] = [
 		deleteSingleTrip(user_id, trip_id),
 	];

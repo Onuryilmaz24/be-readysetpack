@@ -4,8 +4,8 @@ exports.removeEntireChecklist = exports.deleteSingleItemFromItems = exports.upda
 const api_utils_1 = require("../Models/api.utils");
 const checklistmodel_1 = require("../Models/checklistmodel");
 const getSingleChecklist = (req, res, next) => {
-    const user_id = Number(req.params.user_id);
-    const trip_id = Number(req.params.trip_id);
+    const user_id = req.params.user_id;
+    const trip_id = req.params.trip_id;
     const promises = [
         (0, checklistmodel_1.fetchSingleChecklist)(user_id, trip_id),
     ];
@@ -25,8 +25,8 @@ const getSingleChecklist = (req, res, next) => {
 };
 exports.getSingleChecklist = getSingleChecklist;
 const postChecklist = (req, res, next) => {
-    const user_id = Number(req.params.user_id);
-    const trip_id = Number(req.params.trip_id);
+    const user_id = req.params.user_id;
+    const trip_id = req.params.trip_id;
     const postBody = req.body;
     const promises = [
         (0, checklistmodel_1.addChecklist)(user_id, trip_id),
@@ -47,8 +47,8 @@ const postChecklist = (req, res, next) => {
 };
 exports.postChecklist = postChecklist;
 const updateChecklistItems = (req, res, next) => {
-    const user_id = Number(req.params.user_id);
-    const trip_id = Number(req.params.trip_id);
+    const user_id = req.params.user_id;
+    const trip_id = req.params.trip_id;
     const postBody = req.body.newItem;
     const promises = [
         (0, checklistmodel_1.addItemsToChecklist)(user_id, trip_id, postBody),
@@ -69,8 +69,8 @@ const updateChecklistItems = (req, res, next) => {
 };
 exports.updateChecklistItems = updateChecklistItems;
 const deleteSingleItemFromItems = (req, res, next) => {
-    const user_id = Number(req.params.user_id);
-    const trip_id = Number(req.params.trip_id);
+    const user_id = req.params.user_id;
+    const trip_id = req.params.trip_id;
     const deleteBody = req.body.item;
     const promises = [
         (0, checklistmodel_1.removeSingleItemFromItemsArray)(user_id, trip_id, deleteBody),
@@ -91,8 +91,8 @@ const deleteSingleItemFromItems = (req, res, next) => {
 };
 exports.deleteSingleItemFromItems = deleteSingleItemFromItems;
 const removeEntireChecklist = (req, res, next) => {
-    const user_id = Number(req.params.user_id);
-    const trip_id = Number(req.params.trip_id);
+    const user_id = req.params.user_id;
+    const trip_id = req.params.trip_id;
     const promises = [
         (0, checklistmodel_1.deleteEntireChecklist)(user_id, trip_id),
     ];

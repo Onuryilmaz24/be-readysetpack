@@ -2,21 +2,22 @@ import db from '../db/connection';
 import fetchCityInfo from './utils/fetch-city-info';
 import { Trips } from '../types/types';
 import fetchExchangeRate from './utils/convert_currency';
+import visaCheck from './utils/visaCheck';
 
 export const fetchTripsByUserId = (
-	user_id: number,
+	user_id: string,
 	sort_by: string = 'trip_id',
 	order: string = 'DESC'
 ) => {
 	let sqlText: string = `SELECT * FROM trips WHERE user_id = $1 ORDER BY ${sort_by} ${order};`;
-	const values: number[] = [user_id];
+	const values: string[] = [user_id];
 
 	return db.query(sqlText, values).then(({ rows }) => {
 		return rows;
 	});
 };
 
-export const createTrip = async (user_id: number, postBody: Trips) => {
+export const createTrip = async (user_id: string, postBody: Trips) => {
 	const sqlText: string = `
 	  INSERT INTO trips(user_id, destination, start_date, end_date, passport_issued_country, weather, visa_type, budget, is_booked_hotel, people_count, city_information, landmarks, events, daily_expected_cost)
 	  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING*;
@@ -28,7 +29,6 @@ export const createTrip = async (user_id: number, postBody: Trips) => {
 		end_date,
 		passport_issued_country,
 		weather,
-		visa_type,
 		budget,
 		is_booked_hotel,
 		people_count,
@@ -38,7 +38,7 @@ export const createTrip = async (user_id: number, postBody: Trips) => {
 	} = postBody;
 
 	const cityInfo = await fetchCityInfo(destination.city);
-
+	const visa_type = await visaCheck(destination.country,passport_issued_country)
 
 	const destination_amount = await fetchExchangeRate(
 		budget.current_currency,
@@ -70,8 +70,8 @@ export const createTrip = async (user_id: number, postBody: Trips) => {
 };
 
 export const changeTripData = (
-	user_id: number,
-	trip_id: number,
+	user_id: string,
+	trip_id: string,
 	postBody: any
 ) => {
 	const values = Object.values(postBody);
@@ -94,7 +94,7 @@ export const changeTripData = (
 		})
 		.join(', ');
 
-	values.push(Number(trip_id), Number(user_id));
+	values.push(trip_id, user_id);
 
 	const sqlText = `UPDATE trips SET ${setClause} 
   WHERE trip_id = $${values.length - 1} 
@@ -106,16 +106,16 @@ export const changeTripData = (
 	});
 };
 
-export const fetchSingleTrip = (user_id: number, trip_id: number) => {
+export const fetchSingleTrip = (user_id: string, trip_id: string) => {
 	let sqlText: string = `SELECT * FROM trips WHERE user_id = $1 AND trip_id = $2;`;
-	const values: number[] = [user_id, trip_id];
+	const values: string[] = [user_id, trip_id];
 
 	return db.query(sqlText, values).then(({ rows }) => {
 		return rows[0];
 	});
 };
 
-export const deleteSingleTrip = (user_id: number, trip_id: number) => {
+export const deleteSingleTrip = (user_id: string, trip_id: string) => {
 	const sqlText: string = `DELETE FROM trips WHERE user_id = $1 AND trip_id = $2`;
 	const values = [user_id, trip_id];
 

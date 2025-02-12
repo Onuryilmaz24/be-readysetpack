@@ -16,6 +16,7 @@ exports.deleteSingleTrip = exports.fetchSingleTrip = exports.changeTripData = ex
 const connection_1 = __importDefault(require("../db/connection"));
 const fetch_city_info_1 = __importDefault(require("./utils/fetch-city-info"));
 const convert_currency_1 = __importDefault(require("./utils/convert_currency"));
+const visaCheck_1 = __importDefault(require("./utils/visaCheck"));
 const fetchTripsByUserId = (user_id, sort_by = 'trip_id', order = 'DESC') => {
     let sqlText = `SELECT * FROM trips WHERE user_id = $1 ORDER BY ${sort_by} ${order};`;
     const values = [user_id];
@@ -29,8 +30,9 @@ const createTrip = (user_id, postBody) => __awaiter(void 0, void 0, void 0, func
 	  INSERT INTO trips(user_id, destination, start_date, end_date, passport_issued_country, weather, visa_type, budget, is_booked_hotel, people_count, city_information, landmarks, events, daily_expected_cost)
 	  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING*;
 	`;
-    const { destination, start_date, end_date, passport_issued_country, weather, visa_type, budget, is_booked_hotel, people_count, landmarks, events, daily_expected_cost, } = postBody;
+    const { destination, start_date, end_date, passport_issued_country, weather, budget, is_booked_hotel, people_count, landmarks, events, daily_expected_cost, } = postBody;
     const cityInfo = yield (0, fetch_city_info_1.default)(destination.city);
+    const visa_type = yield (0, visaCheck_1.default)(destination.country, passport_issued_country);
     const destination_amount = yield (0, convert_currency_1.default)(budget.current_currency, budget.destination_currency, budget.current_amount);
     const values = [
         user_id,
@@ -73,7 +75,7 @@ const changeTripData = (user_id, trip_id, postBody) => {
         return `${field} = $${index + 1}`;
     })
         .join(', ');
-    values.push(Number(trip_id), Number(user_id));
+    values.push(trip_id, user_id);
     const sqlText = `UPDATE trips SET ${setClause} 
   WHERE trip_id = $${values.length - 1} 
   AND user_id = $${values.length} 
