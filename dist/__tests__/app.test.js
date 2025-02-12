@@ -372,12 +372,12 @@ describe('POST /api/trips/:user_id', () => {
         const tripData = {
             destination: {
                 city: 'Amsterdam',
-                country: 'NE',
+                country: 'NL',
                 currency: 'EUR',
             },
             start_date: '25/01/2025',
             end_date: '15/02/2025',
-            passport_issued_country: 'UK',
+            passport_issued_country: 'GB',
             weather: {
                 temp: 25,
                 weather_type: 'Cloudly',
