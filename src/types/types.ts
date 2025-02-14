@@ -95,8 +95,8 @@ type Events = {
 	name: string;
 	venue: string;
 	date: string;
-	img: string;
-	price: number;
+	event_url: string;
+	img_url:string
 };
 
 export {

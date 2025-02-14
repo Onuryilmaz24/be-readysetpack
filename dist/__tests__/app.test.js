@@ -22,7 +22,7 @@ const trips_1 = __importDefault(require("../db/data/test-data/trips"));
 const dailycost_1 = __importDefault(require("../db/data/test-data/dailycost"));
 const endpoints_json_1 = __importDefault(require("../../endpoints.json"));
 afterAll(() => {
-    console.log('All test finished');
+    console.log("All test finished");
     return connection_1.default.end();
 });
 let users = [];
@@ -53,20 +53,20 @@ beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
         checklist_id: checklist.checklist_id,
     }));
 }));
-describe('GET /api', () => {
-    test('200: Responds with all endpoints', () => {
+describe("GET /api", () => {
+    test("200: Responds with all endpoints", () => {
         return (0, supertest_1.default)(app_1.default)
-            .get('/api')
+            .get("/api")
             .expect(200)
             .then(({ body: { endpoints } }) => {
             expect(endpoints).toEqual(endpoints_json_1.default);
         });
     });
 });
-describe('GET /api/users', () => {
-    test('200: Responds with all users', () => {
+describe("GET /api/users", () => {
+    test("200: Responds with all users", () => {
         return (0, supertest_1.default)(app_1.default)
-            .get('/api/users')
+            .get("/api/users")
             .expect(200)
             .then(({ body: { users } }) => {
             expect(users).toHaveLength(5);
@@ -79,17 +79,17 @@ describe('GET /api/users', () => {
             });
         });
     });
-    test('404: Responds with an error message when the route is not correct', () => {
+    test("404: Responds with an error message when the route is not correct", () => {
         return (0, supertest_1.default)(app_1.default)
-            .get('/api/usersllalalala')
+            .get("/api/usersllalalala")
             .expect(404)
             .then((response) => {
-            expect(response.res.statusMessage).toBe('Not Found');
+            expect(response.res.statusMessage).toBe("Not Found");
         });
     });
 });
-describe('GET /api/users/:user_id', () => {
-    test('200: Responds with single user ', () => {
+describe("GET /api/users/:user_id", () => {
+    test("200: Responds with single user ", () => {
         return (0, supertest_1.default)(app_1.default)
             .get(`/api/users/${user1.user_id}`)
             .expect(200)
@@ -101,105 +101,105 @@ describe('GET /api/users/:user_id', () => {
             }));
         });
     });
-    test('404: Responds with msg when the user does not exist ', () => {
+    test("404: Responds with msg when the user does not exist ", () => {
         return (0, supertest_1.default)(app_1.default)
-            .get('/api/users/10')
+            .get("/api/users/10")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
 });
-describe('DELETE /api/user/:user_id', () => {
-    test('204: Should delete selected user ', () => {
+describe("DELETE /api/user/:user_id", () => {
+    test("204: Should delete selected user ", () => {
         return (0, supertest_1.default)(app_1.default).delete(`/api/users/${user1.user_id}`).expect(204);
     });
-    test('404: Responds with msg when the user does not exist ', () => {
+    test("404: Responds with msg when the user does not exist ", () => {
         return (0, supertest_1.default)(app_1.default)
-            .delete('/api/users/9f55df0f-6350-4b1d-a271-297d490857d0')
+            .delete("/api/users/9f55df0f-6350-4b1d-a271-297d490857d0")
             .expect(404)
             .then((response) => {
-            expect(response.body.msg).toBe('Does Not Found');
+            expect(response.body.msg).toBe("Does Not Found");
         });
     });
-    test('400: Responds with msg when the user_id is not a number ', () => {
+    test("400: Responds with msg when the user_id is not a number ", () => {
         return (0, supertest_1.default)(app_1.default)
-            .delete('/api/users/asd')
+            .delete("/api/users/asd")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
 });
-describe('POST api/users', () => {
-    test('201: Should post a new user', () => {
+describe("POST api/users", () => {
+    test("201: Should post a new user", () => {
         const userData = {
-            username: 'alexonur',
-            name: 'Alex Onur',
+            username: "alexonur",
+            name: "Alex Onur",
         };
         return (0, supertest_1.default)(app_1.default)
-            .post('/api/users')
+            .post("/api/users")
             .send(userData)
             .expect(201)
             .then(({ body: { user } }) => {
             expect(user).toEqual({
                 user_id: expect.any(String),
-                username: 'alexonur',
-                name: 'Alex Onur',
+                username: "alexonur",
+                name: "Alex Onur",
             });
         });
     });
-    test('201: Should post a new user', () => {
+    test("201: Should post a new user", () => {
         const userData = {
             user_id: "e9b0f6e4-5f29-4e18-ae4d-3372e8ed6946",
-            username: 'alexonur',
-            name: 'Alex Onur',
+            username: "alexonur",
+            name: "Alex Onur",
         };
         return (0, supertest_1.default)(app_1.default)
-            .post('/api/users')
+            .post("/api/users")
             .send(userData)
             .expect(201)
             .then(({ body: { user } }) => {
             expect(user).toEqual({
                 user_id: "e9b0f6e4-5f29-4e18-ae4d-3372e8ed6946",
-                username: 'alexonur',
-                name: 'Alex Onur',
+                username: "alexonur",
+                name: "Alex Onur",
             });
         });
     });
-    test('400: Responds with bad request when post body has more properties than allowed', () => {
+    test("400: Responds with bad request when post body has more properties than allowed", () => {
         const userData = {
             user_id: "9",
-            username: 'alexonur444',
-            name: 'Alex Onur',
+            username: "alexonur444",
+            name: "Alex Onur",
         };
         return (0, supertest_1.default)(app_1.default)
-            .post('/api/users')
+            .post("/api/users")
             .send(userData)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Responds with bad request when passed number in name', () => {
+    test("400: Responds with bad request when passed number in name", () => {
         const userData = {
-            username: 'alexonur',
-            name: 'Alex Onur123',
+            username: "alexonur",
+            name: "Alex Onur123",
         };
         return (0, supertest_1.default)(app_1.default)
-            .post('/api/users')
+            .post("/api/users")
             .send(userData)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
 });
-describe('PATCH api/users/:user_id', () => {
-    test('200: Responds with an updated user object ', () => {
+describe("PATCH api/users/:user_id", () => {
+    test("200: Responds with an updated user object ", () => {
         const userData = {
-            username: 'alexonur',
-            name: 'Alex Onur',
+            username: "alexonur",
+            name: "Alex Onur",
         };
         return (0, supertest_1.default)(app_1.default)
             .patch(`/api/users/${user1.user_id}`)
@@ -208,14 +208,14 @@ describe('PATCH api/users/:user_id', () => {
             .then(({ body: { user } }) => {
             expect(user).toEqual({
                 user_id: expect.any(String),
-                username: 'alexonur',
-                name: 'Alex Onur',
+                username: "alexonur",
+                name: "Alex Onur",
             });
         });
     });
-    test('200: Responds with an updated username when passed only username ', () => {
+    test("200: Responds with an updated username when passed only username ", () => {
         const userData = {
-            username: 'alexonur',
+            username: "alexonur",
         };
         return (0, supertest_1.default)(app_1.default)
             .patch(`/api/users/${user1.user_id}`)
@@ -224,14 +224,14 @@ describe('PATCH api/users/:user_id', () => {
             .then(({ body: { user } }) => {
             expect(user).toEqual({
                 user_id: expect.any(String),
-                username: 'alexonur',
-                name: 'alex',
+                username: "alexonur",
+                name: "alex",
             });
         });
     });
-    test('200: Responds with an updated username when passed only name ', () => {
+    test("200: Responds with an updated username when passed only name ", () => {
         const userData = {
-            name: 'onur',
+            name: "onur",
         };
         return (0, supertest_1.default)(app_1.default)
             .patch(`/api/users/${user1.user_id}`)
@@ -240,75 +240,75 @@ describe('PATCH api/users/:user_id', () => {
             .then(({ body: { user } }) => {
             expect(user).toEqual({
                 user_id: expect.any(String),
-                username: 'alex123',
-                name: 'onur',
+                username: "alex123",
+                name: "onur",
             });
         });
     });
-    test('400: Responds with bad request when passed number in name', () => {
+    test("400: Responds with bad request when passed number in name", () => {
         const userData = {
-            username: 'alexonur',
-            name: 'Alex Onur123',
+            username: "alexonur",
+            name: "Alex Onur123",
         };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/users/1')
+            .patch("/api/users/1")
             .send(userData)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Responds with bad request when user try to change user_id', () => {
+    test("400: Responds with bad request when user try to change user_id", () => {
         const userData = {
             user_id: "9",
-            username: 'alexonur',
-            name: 'Alex Onur123',
+            username: "alexonur",
+            name: "Alex Onur123",
         };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/users/1')
+            .patch("/api/users/1")
             .send(userData)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('404: Responds with not found request when user does not exist', () => {
+    test("404: Responds with not found request when user does not exist", () => {
         const userData = {
-            username: 'alexonur',
-            name: 'Alex Onur',
+            username: "alexonur",
+            name: "Alex Onur",
         };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/users/9f55df0f-6350-4b1d-a271-297d490857d0')
+            .patch("/api/users/9f55df0f-6350-4b1d-a271-297d490857d0")
             .send(userData)
             .expect(404)
             .then((response) => {
-            expect(response.body.msg).toBe('Does Not Found');
+            expect(response.body.msg).toBe("Does Not Found");
         });
     });
 });
-describe('GET /api/dailyCost/:country', () => {
-    test('200: Responds with correct daily cost based on input destination', () => {
+describe("GET /api/dailyCost/:country", () => {
+    test("200: Responds with correct daily cost based on input destination", () => {
         return (0, supertest_1.default)(app_1.default)
-            .get('/api/dailyCost/UK')
+            .get("/api/dailyCost/UK")
             .expect(200)
             .then(({ body: { countryInfo } }) => {
             expect(countryInfo).toEqual({
-                country: 'UK',
+                country: "UK",
                 daily_cost_in_dollars: 2000,
             });
         });
     });
-    test('404: Responds with not found when country does not exist', () => {
+    test("404: Responds with not found when country does not exist", () => {
         return (0, supertest_1.default)(app_1.default)
-            .get('/api/dailyCost/unknowncountry')
+            .get("/api/dailyCost/unknowncountry")
             .expect(404)
             .then((response) => {
-            expect(response.body.msg).toBe('Does Not Found');
+            expect(response.body.msg).toBe("Does Not Found");
         });
     });
 });
-describe('GET /api/trips/:user_id', () => {
-    test('200: Responds with all trips for user ', () => {
+describe("GET /api/trips/:user_id", () => {
+    test("200: Responds with all trips for user ", () => {
         return (0, supertest_1.default)(app_1.default)
             .get(`/api/trips/${user1.user_id}`)
             .expect(200)
@@ -346,11 +346,11 @@ describe('GET /api/trips/:user_id', () => {
                     }),
                     events: expect.arrayContaining([
                         expect.objectContaining({
-                            img: expect.any(String),
+                            venue: expect.any(String),
                             date: expect.any(String),
                             name: expect.any(String),
-                            price: expect.any(Number),
-                            venue: expect.any(String),
+                            event_url: expect.any(String),
+                            img_url: expect.any(String),
                         }),
                     ]),
                     daily_expected_cost: expect.any(Number),
@@ -358,51 +358,42 @@ describe('GET /api/trips/:user_id', () => {
             });
         });
     });
-    test('404: Should responds with an error message when user does not exist', () => {
+    test("404: Should responds with an error message when user does not exist", () => {
         return (0, supertest_1.default)(app_1.default)
-            .get('/api/trips/9f55df0f-6350-4b1d-a271-297d490857d0')
+            .get("/api/trips/9f55df0f-6350-4b1d-a271-297d490857d0")
             .expect(404)
             .then((response) => {
-            expect(response.body.msg).toBe('Does Not Found');
+            expect(response.body.msg).toBe("Does Not Found");
         });
     });
 });
-describe('POST /api/trips/:user_id', () => {
-    test('201: Should post a new trip for user ', () => {
+describe("POST /api/trips/:user_id", () => {
+    test("201: Should post a new trip for user ", () => {
         const tripData = {
             destination: {
-                city: 'Amsterdam',
-                country: 'NL',
-                currency: 'EUR',
+                city: "Amsterdam",
+                country: "NL",
+                currency: "EUR",
             },
-            start_date: '25/01/2025',
-            end_date: '15/02/2025',
-            passport_issued_country: 'GB',
+            start_date: "2025-01-18",
+            end_date: "2025-02-15",
+            passport_issued_country: "GB",
             weather: {
                 temp: 25,
-                weather_type: 'Cloudly',
+                weather_type: "Cloudly",
             },
-            visa_type: 'eVisa',
+            visa_type: "eVisa",
             budget: {
                 current_amount: 3000,
-                current_currency: 'GBP',
-                destination_currency: 'EUR',
+                current_currency: "GBP",
+                destination_currency: "EUR",
             },
             is_booked_hotel: false,
             people_count: 1,
             landmarks: {
-                best_places_to_visit: ['Tower', 'City Center', 'Museum'],
-                img_url_of_landmarks: ['', '', ''],
+                best_places_to_visit: ["Tower", "City Center", "Museum"],
+                img_url_of_landmarks: ["", "", ""],
             },
-            events: [
-                {
-                    name: 'eminem concert',
-                    venue: 'empty venue',
-                    date: '15/01/2025',
-                    img: '',
-                    price: 1000,
-                },
-            ],
             daily_expected_cost: 200,
         };
         return (0, supertest_1.default)(app_1.default)
@@ -441,71 +432,71 @@ describe('POST /api/trips/:user_id', () => {
                 }),
                 events: expect.arrayContaining([
                     expect.objectContaining({
-                        img: expect.any(String),
+                        venue: expect.any(String),
                         date: expect.any(String),
                         name: expect.any(String),
-                        price: expect.any(Number),
-                        venue: expect.any(String),
+                        event_url: expect.any(String),
+                        img_url: expect.any(String),
                     }),
                 ]),
                 daily_expected_cost: expect.any(Number),
             }));
         });
     });
-    test('404: Responds with error message when user does not exist', () => {
+    test("404: Responds with error message when user does not exist", () => {
         const tripData = {
             destination: {
-                city: 'Amsterdam',
-                country: 'NE',
-                currency: 'EUR',
+                city: "Amsterdam",
+                country: "NE",
+                currency: "EUR",
             },
-            start_date: '25/01/2025',
-            end_date: '15/02/2025',
-            passport_issued_country: 'UK',
+            start_date: "25/01/2025",
+            end_date: "15/02/2025",
+            passport_issued_country: "UK",
             weather: {
                 temp: 25,
-                weather_type: 'Cloudly',
+                weather_type: "Cloudly",
             },
-            visa_type: 'eVisa',
+            visa_type: "eVisa",
             budget: {
                 amount: 1000,
-                currency: 'EUR',
+                currency: "EUR",
             },
             is_booked_hotel: false,
             people_count: 1,
-            city_information: 'Capital of Netherlands',
+            city_information: "Capital of Netherlands",
             landmarks: {
-                best_places_to_visit: ['Tower', 'City Center', 'Museum'],
-                img_url_of_landmarks: ['', '', ''],
+                best_places_to_visit: ["Tower", "City Center", "Museum"],
+                img_url_of_landmarks: ["", "", ""],
             },
             events: [
                 {
-                    name: 'eminem concert',
-                    venue: 'empty venue',
-                    date: '15/01/2025',
-                    img: '',
+                    name: "eminem concert",
+                    venue: "empty venue",
+                    date: "15/01/2025",
+                    img: "",
                     price: 1000,
                 },
             ],
             daily_expected_cost: 200,
         };
         return (0, supertest_1.default)(app_1.default)
-            .post('/api/trips/9f55df0f-6350-4b1d-a271-297d490857d0')
+            .post("/api/trips/9f55df0f-6350-4b1d-a271-297d490857d0")
             .send(tripData)
             .expect(404)
             .then((response) => {
-            expect(response.body.msg).toBe('Does Not Found');
+            expect(response.body.msg).toBe("Does Not Found");
         });
     });
 });
-describe('PATCH /api/trips/:user_id/:trip_id', () => {
-    test('200: Responds with updated trip data', () => {
+describe("PATCH /api/trips/:user_id/:trip_id", () => {
+    test("200: Responds with updated trip data", () => {
         const tripData = {
-            start_date: '10/02/2025',
-            end_date: '05/03/2025',
+            start_date: "10/02/2025",
+            end_date: "05/03/2025",
             budget: {
                 amount: 1500,
-                currency: 'GBP',
+                currency: "GBP",
             },
             is_booked_hotel: true,
             people_count: 3,
@@ -515,17 +506,17 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
             .send(tripData)
             .expect(200)
             .then(({ body: { trip } }) => {
-            expect(trip.start_date).toBe('10/02/2025');
-            expect(trip.end_date).toBe('05/03/2025');
+            expect(trip.start_date).toBe("10/02/2025");
+            expect(trip.end_date).toBe("05/03/2025");
             expect(trip.budget).toEqual({
                 amount: 1500,
-                currency: 'GBP',
+                currency: "GBP",
             });
             expect(trip.is_booked_hotel).toBe(true);
             expect(trip.people_count).toBe(3);
         });
     });
-    test('200: Responds with updated trip data with one value changed', () => {
+    test("200: Responds with updated trip data with one value changed", () => {
         const tripData = {
             people_count: 3,
         };
@@ -537,12 +528,12 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
             expect(trip.people_count).toBe(3);
         });
     });
-    test('200: Responds with updated trip data with two values changed', () => {
+    test("200: Responds with updated trip data with two values changed", () => {
         const tripData = {
             people_count: 3,
             budget: {
                 amount: 3000,
-                currency: 'TRY',
+                currency: "TRY",
             },
         };
         return (0, supertest_1.default)(app_1.default)
@@ -553,48 +544,48 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
             expect(trip.people_count).toBe(3);
             expect(trip.budget).toEqual({
                 amount: 3000,
-                currency: 'TRY',
+                currency: "TRY",
             });
         });
     });
-    test('400: Responds with an error when given incorrect user_id', () => {
+    test("400: Responds with an error when given incorrect user_id", () => {
         const tripData = {
             people_count: 3,
             budget: {
                 amount: 3000,
-                currency: 'TRY',
+                currency: "TRY",
             },
         };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/trips/9f55df0f-6350-4b1d-a271-297d490857d0/1')
+            .patch("/api/trips/9f55df0f-6350-4b1d-a271-297d490857d0/1")
             .send(tripData)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Responds with an error when given incorrect trip_id', () => {
+    test("400: Responds with an error when given incorrect trip_id", () => {
         const tripData = {
             people_count: 3,
             budget: {
                 amount: 3000,
-                currency: 'TRY',
+                currency: "TRY",
             },
         };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/trips/1/9f55df0f-6350-4b1d-a271-297d490857d0')
+            .patch("/api/trips/1/9f55df0f-6350-4b1d-a271-297d490857d0")
             .send(tripData)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Responds with an error when trying to change incorrect column', () => {
+    test("400: Responds with an error when trying to change incorrect column", () => {
         const tripData = {
             destination: {
-                city: 'London',
-                country: 'UK',
-                currency: 'GBP',
+                city: "London",
+                country: "UK",
+                currency: "GBP",
             },
         };
         return (0, supertest_1.default)(app_1.default)
@@ -602,15 +593,15 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
             .send(tripData)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Responds with an error when trying to change incorrect column', () => {
+    test("400: Responds with an error when trying to change incorrect column", () => {
         const tripData = {
             destination: {
-                city: 'London',
-                country: 'UK',
-                currency: 'GBP',
+                city: "London",
+                country: "UK",
+                currency: "GBP",
             },
             people_count: 3,
         };
@@ -619,12 +610,12 @@ describe('PATCH /api/trips/:user_id/:trip_id', () => {
             .send(tripData)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
 });
-describe('GET /api/trips/:user_id/trip_id', () => {
-    test('200: Responds with a single trip for specified user', () => {
+describe("GET /api/trips/:user_id/trip_id", () => {
+    test("200: Responds with a single trip for specified user", () => {
         return (0, supertest_1.default)(app_1.default)
             .get(`/api/trips/${user1.user_id}/${trip1.trip_id}`)
             .expect(200)
@@ -660,11 +651,11 @@ describe('GET /api/trips/:user_id/trip_id', () => {
                 }),
                 events: expect.arrayContaining([
                     expect.objectContaining({
-                        img: expect.any(String),
+                        venue: expect.any(String),
                         date: expect.any(String),
                         name: expect.any(String),
-                        price: expect.any(Number),
-                        venue: expect.any(String),
+                        event_url: expect.any(String),
+                        img_url: expect.any(String),
                     }),
                 ]),
                 daily_expected_cost: expect.any(Number),
@@ -672,29 +663,31 @@ describe('GET /api/trips/:user_id/trip_id', () => {
         });
     });
 });
-describe('DELETE /api/trips/:user_id/:trip_id', () => {
-    test('204: Should delete selected trip ', () => {
-        return (0, supertest_1.default)(app_1.default).delete(`/api/trips/${user1.user_id}/${trip1.trip_id}`).expect(204);
-    });
-    test('400: Responds with msg when the trip does not exist ', () => {
+describe("DELETE /api/trips/:user_id/:trip_id", () => {
+    test("204: Should delete selected trip ", () => {
         return (0, supertest_1.default)(app_1.default)
-            .delete('/api/trips/1/9f55df0f-6350-4b1d-a271-297d490857d0')
+            .delete(`/api/trips/${user1.user_id}/${trip1.trip_id}`)
+            .expect(204);
+    });
+    test("400: Responds with msg when the trip does not exist ", () => {
+        return (0, supertest_1.default)(app_1.default)
+            .delete("/api/trips/1/9f55df0f-6350-4b1d-a271-297d490857d0")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Responds with msg when the trip_id is not a number ', () => {
+    test("400: Responds with msg when the trip_id is not a number ", () => {
         return (0, supertest_1.default)(app_1.default)
-            .delete('/api/trips/1/9f55df0f-6350-4b1d-a271-297d490857d0')
+            .delete("/api/trips/1/9f55df0f-6350-4b1d-a271-297d490857d0")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
 });
-describe('GET /api/checklists/:user_id/:trip_id', () => {
-    test('200: Returns a single checklist based on the trip_id', () => {
+describe("GET /api/checklists/:user_id/:trip_id", () => {
+    test("200: Returns a single checklist based on the trip_id", () => {
         return (0, supertest_1.default)(app_1.default)
             .get(`/api/checklists/${user1.user_id}/${trip1.trip_id}`)
             .expect(200)
@@ -707,41 +700,41 @@ describe('GET /api/checklists/:user_id/:trip_id', () => {
             }));
         });
     });
-    test('400: Returns an error when passed incorrect/not exist user id', () => {
+    test("400: Returns an error when passed incorrect/not exist user id", () => {
         return (0, supertest_1.default)(app_1.default)
             .get(`/api/checklists/9f55df0f-6350-4b1d-a271-297d490857d0/1`)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Returns an error when passed incorrect/not exist trip id', () => {
+    test("400: Returns an error when passed incorrect/not exist trip id", () => {
         return (0, supertest_1.default)(app_1.default)
-            .get('/api/checklists/1/9f55df0f-6350-4b1d-a271-297d490857d0')
+            .get("/api/checklists/1/9f55df0f-6350-4b1d-a271-297d490857d0")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Returns an error when passed string as trip_id', () => {
+    test("400: Returns an error when passed string as trip_id", () => {
         return (0, supertest_1.default)(app_1.default)
-            .get('/api/checklists/1/abc')
+            .get("/api/checklists/1/abc")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Returns an error when passed string as user_id', () => {
+    test("400: Returns an error when passed string as user_id", () => {
         return (0, supertest_1.default)(app_1.default)
-            .get('/api/checklists/abc/1')
+            .get("/api/checklists/abc/1")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
 });
-describe('POST /api/checklists/:user_id/:trip_id', () => {
-    test('201: Posts checklist to the checklist table ', () => {
+describe("POST /api/checklists/:user_id/:trip_id", () => {
+    test("201: Posts checklist to the checklist table ", () => {
         return (0, supertest_1.default)(app_1.default)
             .post(`/api/checklists/${user1.user_id}/${trip1.trip_id}`)
             .expect(201)
@@ -754,42 +747,42 @@ describe('POST /api/checklists/:user_id/:trip_id', () => {
             }));
         });
     });
-    test('400: Returns an error when passed incorrect/not exist user id', () => {
+    test("400: Returns an error when passed incorrect/not exist user id", () => {
         return (0, supertest_1.default)(app_1.default)
-            .post('/api/checklists/10/1')
+            .post("/api/checklists/10/1")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Returns an error when passed incorrect/not exist trip id', () => {
+    test("400: Returns an error when passed incorrect/not exist trip id", () => {
         return (0, supertest_1.default)(app_1.default)
-            .post('/api/checklists/1/10')
+            .post("/api/checklists/1/10")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Returns an error when passed user_id as a string', () => {
+    test("400: Returns an error when passed user_id as a string", () => {
         return (0, supertest_1.default)(app_1.default)
-            .post('/api/checklists/abc/1')
+            .post("/api/checklists/abc/1")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Returns an error when passed trip_id as a string', () => {
+    test("400: Returns an error when passed trip_id as a string", () => {
         return (0, supertest_1.default)(app_1.default)
-            .post('/api/checklists/1/abc')
+            .post("/api/checklists/1/abc")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
 });
-describe('PATCH /api/checklists/:user_id/:trip_id/', () => {
-    test('200: Should patch checklist items ', () => {
-        const inputChecklistItem = { newItem: 'new item' };
+describe("PATCH /api/checklists/:user_id/:trip_id/", () => {
+    test("200: Should patch checklist items ", () => {
+        const inputChecklistItem = { newItem: "new item" };
         return (0, supertest_1.default)(app_1.default)
             .patch(`/api/checklists/${user1.user_id}/${trip1.trip_id}`)
             .send(inputChecklistItem)
@@ -800,63 +793,63 @@ describe('PATCH /api/checklists/:user_id/:trip_id/', () => {
                 trip_id: expect.any(String),
                 user_id: expect.any(String),
                 items: [
-                    'Check your passport',
-                    'Print or download your tickets (flight/train/bus).',
-                    'Pack comfortable T-shirts/tops.',
-                    'Dont forget your pants/shorts/skirts.',
-                    'Pack comfortable shoes for walking.',
-                    'Pack your toothbrush and toothpaste.',
-                    'Bring your phone charger.',
-                    'Pack a power bank for emergencies.',
-                    'new item',
+                    "Check your passport",
+                    "Print or download your tickets (flight/train/bus).",
+                    "Pack comfortable T-shirts/tops.",
+                    "Dont forget your pants/shorts/skirts.",
+                    "Pack comfortable shoes for walking.",
+                    "Pack your toothbrush and toothpaste.",
+                    "Bring your phone charger.",
+                    "Pack a power bank for emergencies.",
+                    "new item",
                 ],
             });
         });
     });
-    test('400: Should return an error msg if user id does not exist ', () => {
-        const inputChecklistItem = { newItem: 'new item' };
+    test("400: Should return an error msg if user id does not exist ", () => {
+        const inputChecklistItem = { newItem: "new item" };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/checklists/10/1')
+            .patch("/api/checklists/10/1")
             .send(inputChecklistItem)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Should return an error msg if trip id does not exist ', () => {
-        const inputChecklistItem = { newItem: 'new item' };
+    test("400: Should return an error msg if trip id does not exist ", () => {
+        const inputChecklistItem = { newItem: "new item" };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/checklists/1/10')
+            .patch("/api/checklists/1/10")
             .send(inputChecklistItem)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Should return an error msg if user id is string ', () => {
-        const inputChecklistItem = { newItem: 'new item' };
+    test("400: Should return an error msg if user id is string ", () => {
+        const inputChecklistItem = { newItem: "new item" };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/checklists/abc/1')
+            .patch("/api/checklists/abc/1")
             .send(inputChecklistItem)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Should return an error msg if trip id is string ', () => {
-        const inputChecklistItem = { newItem: 'new item' };
+    test("400: Should return an error msg if trip id is string ", () => {
+        const inputChecklistItem = { newItem: "new item" };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/checklists/1/abc')
+            .patch("/api/checklists/1/abc")
             .send(inputChecklistItem)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
 });
-describe('PATCH /api/checklists/:user_id/:trip_id/delete-item (Deleting single item from items array)', () => {
-    test('200: Should delete single item from items array ', () => {
-        const deleteChecklistItem = { item: 'Check your passport' };
+describe("PATCH /api/checklists/:user_id/:trip_id/delete-item (Deleting single item from items array)", () => {
+    test("200: Should delete single item from items array ", () => {
+        const deleteChecklistItem = { item: "Check your passport" };
         return (0, supertest_1.default)(app_1.default)
             .patch(`/api/checklists/${user1.user_id}/${trip1.trip_id}/delete-item`)
             .send(deleteChecklistItem)
@@ -867,92 +860,94 @@ describe('PATCH /api/checklists/:user_id/:trip_id/delete-item (Deleting single i
                 trip_id: expect.any(String),
                 user_id: expect.any(String),
                 items: [
-                    'Print or download your tickets (flight/train/bus).',
-                    'Pack comfortable T-shirts/tops.',
-                    'Dont forget your pants/shorts/skirts.',
-                    'Pack comfortable shoes for walking.',
-                    'Pack your toothbrush and toothpaste.',
-                    'Bring your phone charger.',
-                    'Pack a power bank for emergencies.',
+                    "Print or download your tickets (flight/train/bus).",
+                    "Pack comfortable T-shirts/tops.",
+                    "Dont forget your pants/shorts/skirts.",
+                    "Pack comfortable shoes for walking.",
+                    "Pack your toothbrush and toothpaste.",
+                    "Bring your phone charger.",
+                    "Pack a power bank for emergencies.",
                 ],
             });
         });
     });
-    test('400: Should return an error msg if user id does not exist ', () => {
-        const deleteChecklistItem = { item: 'Check your passport' };
+    test("400: Should return an error msg if user id does not exist ", () => {
+        const deleteChecklistItem = { item: "Check your passport" };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/checklists/10/1')
+            .patch("/api/checklists/10/1")
             .send(deleteChecklistItem)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Should return an error msg if trip id does not exist ', () => {
-        const deleteChecklistItem = { item: 'Check your passport' };
+    test("400: Should return an error msg if trip id does not exist ", () => {
+        const deleteChecklistItem = { item: "Check your passport" };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/checklists/1/10')
+            .patch("/api/checklists/1/10")
             .send(deleteChecklistItem)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Should return an error msg if user id is string ', () => {
-        const deleteChecklistItem = { item: 'Check your passport' };
+    test("400: Should return an error msg if user id is string ", () => {
+        const deleteChecklistItem = { item: "Check your passport" };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/checklists/abc/1')
+            .patch("/api/checklists/abc/1")
             .send(deleteChecklistItem)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Should return an error msg if trip id is string ', () => {
-        const deleteChecklistItem = { item: 'Check your passport' };
+    test("400: Should return an error msg if trip id is string ", () => {
+        const deleteChecklistItem = { item: "Check your passport" };
         return (0, supertest_1.default)(app_1.default)
-            .patch('/api/checklists/1/abc')
+            .patch("/api/checklists/1/abc")
             .send(deleteChecklistItem)
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
 });
-describe('DELETE /api/checklists/:user_id/:trip_id', () => {
-    test('204: Should delete entire checklist  ', () => {
-        return (0, supertest_1.default)(app_1.default).delete(`/api/checklists/${user1.user_id}/${trip1.trip_id}`).expect(204);
-    });
-    test('400: Should return an error msg if user id does not exist ', () => {
+describe("DELETE /api/checklists/:user_id/:trip_id", () => {
+    test("204: Should delete entire checklist  ", () => {
         return (0, supertest_1.default)(app_1.default)
-            .delete('/api/checklists/10/1')
+            .delete(`/api/checklists/${user1.user_id}/${trip1.trip_id}`)
+            .expect(204);
+    });
+    test("400: Should return an error msg if user id does not exist ", () => {
+        return (0, supertest_1.default)(app_1.default)
+            .delete("/api/checklists/10/1")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('404: Should return an error msg if trip id does not exist ', () => {
+    test("404: Should return an error msg if trip id does not exist ", () => {
         return (0, supertest_1.default)(app_1.default)
-            .delete('/api/checklists/1/10')
+            .delete("/api/checklists/1/10")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Should return an error msg if user id is string ', () => {
+    test("400: Should return an error msg if user id is string ", () => {
         return (0, supertest_1.default)(app_1.default)
-            .delete('/api/checklists/abc/1')
+            .delete("/api/checklists/abc/1")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
-    test('400: Should return an error msg if trip id is string ', () => {
+    test("400: Should return an error msg if trip id is string ", () => {
         return (0, supertest_1.default)(app_1.default)
-            .delete('/api/checklists/1/abc')
+            .delete("/api/checklists/1/abc")
             .expect(400)
             .then((response) => {
-            expect(response.body.msg).toBe('Bad Request');
+            expect(response.body.msg).toBe("Bad Request");
         });
     });
 });
