@@ -3,9 +3,8 @@ import fetchCityInfo from './utils/fetch-city-info';
 import { Trips } from '../types/types';
 import fetchExchangeRate from './utils/convert_currency';
 import visaCheck from './utils/visaCheck';
-import fetchEventsWithoutAxios from './utils/ticket-master';
 import fetchEvents from './utils/ticket-master';
-
+import fetchLandmarks from './utils/google-places';
 export const fetchTripsByUserId = (
 	user_id: string,
 	sort_by: string = 'trip_id',
@@ -34,14 +33,13 @@ export const createTrip = async (user_id: string, postBody: Trips) => {
 		budget,
 		is_booked_hotel,
 		people_count,
-		landmarks,
 		daily_expected_cost,
 	} = postBody;
 
 	const cityInfo = await fetchCityInfo(destination.city);
 	const visa_type = await visaCheck(destination.country,passport_issued_country)
 	const events = await fetchEvents(start_date,end_date,destination.city)
-
+	const landmarks = await fetchLandmarks(destination.city)
 
 
 	const destination_amount = await fetchExchangeRate(

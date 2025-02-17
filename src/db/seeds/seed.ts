@@ -8,7 +8,7 @@ import {
 	Destination,
 	Weather,
 	Budget,
-	Landmarks,
+	Landmark,
 	Events,
 } from '../../types/types';
 

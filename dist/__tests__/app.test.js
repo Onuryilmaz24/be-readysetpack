@@ -340,10 +340,13 @@ describe("GET /api/trips/:user_id", () => {
                     is_booked_hotel: expect.any(Boolean),
                     people_count: expect.any(Number),
                     city_information: expect.any(String),
-                    landmarks: expect.objectContaining({
-                        best_places_to_visit: expect.any(Object),
-                        img_url_of_landmarks: expect.any(Object),
-                    }),
+                    landmarks: expect.arrayContaining([
+                        expect.objectContaining({
+                            name: expect.any(String),
+                            description: expect.any(String),
+                            img_url: expect.any(String),
+                        }),
+                    ]),
                     events: expect.arrayContaining([
                         expect.objectContaining({
                             venue: expect.any(String),
@@ -375,8 +378,8 @@ describe("POST /api/trips/:user_id", () => {
                 country: "NL",
                 currency: "EUR",
             },
-            start_date: "2025-01-18",
-            end_date: "2025-02-15",
+            start_date: "2025-02-20",
+            end_date: "2025-02-25",
             passport_issued_country: "GB",
             weather: {
                 temp: 25,
@@ -390,10 +393,6 @@ describe("POST /api/trips/:user_id", () => {
             },
             is_booked_hotel: false,
             people_count: 1,
-            landmarks: {
-                best_places_to_visit: ["Tower", "City Center", "Museum"],
-                img_url_of_landmarks: ["", "", ""],
-            },
             daily_expected_cost: 200,
         };
         return (0, supertest_1.default)(app_1.default)
@@ -426,10 +425,13 @@ describe("POST /api/trips/:user_id", () => {
                 is_booked_hotel: expect.any(Boolean),
                 people_count: expect.any(Number),
                 city_information: expect.any(String),
-                landmarks: expect.objectContaining({
-                    best_places_to_visit: expect.any(Object),
-                    img_url_of_landmarks: expect.any(Object),
-                }),
+                landmarks: expect.arrayContaining([
+                    expect.objectContaining({
+                        name: expect.any(String),
+                        description: expect.any(String),
+                        img_url: expect.any(String),
+                    }),
+                ]),
                 events: expect.arrayContaining([
                     expect.objectContaining({
                         venue: expect.any(String),
@@ -645,10 +647,13 @@ describe("GET /api/trips/:user_id/trip_id", () => {
                 is_booked_hotel: expect.any(Boolean),
                 people_count: expect.any(Number),
                 city_information: expect.any(String),
-                landmarks: expect.objectContaining({
-                    best_places_to_visit: expect.any(Object),
-                    img_url_of_landmarks: expect.any(Object),
-                }),
+                landmarks: expect.arrayContaining([
+                    expect.objectContaining({
+                        name: expect.any(String),
+                        description: expect.any(String),
+                        img_url: expect.any(String),
+                    }),
+                ]),
                 events: expect.arrayContaining([
                     expect.objectContaining({
                         venue: expect.any(String),

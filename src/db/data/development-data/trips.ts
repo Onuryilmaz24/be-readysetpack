@@ -25,10 +25,13 @@ const tripsData: Trips[] = [
 		is_booked_hotel: true,
 		people_count: 1,
 		city_information: 'Capital of France',
-		landmarks: {
-			best_places_to_visit: ['Tower', 'City Center', 'Museum'],
-			img_url_of_landmarks: ['', '', ''],
-		},
+		landmarks: [
+			{
+				name: 'Tower',
+				description: 'Tower of Paris',
+				img_url: '',
+			},
+		],
 		events: [
 			{
 				name: 'eminem concert',
@@ -64,10 +67,13 @@ const tripsData: Trips[] = [
 		is_booked_hotel: false,
 		people_count: 2,
 		city_information: 'Capital of Germany',
-		landmarks: {
-			best_places_to_visit: ['Tower', 'City Center', 'Museum'],
-			img_url_of_landmarks: ['', '', ''],
-		},
+		landmarks: [
+			{
+				name: 'Tower',
+				description: 'Tower of Paris',
+				img_url: '',
+			},
+		],
 		events: [
 			{
 				name: 'eminem concert',
@@ -102,10 +108,13 @@ const tripsData: Trips[] = [
 		is_booked_hotel: true,
 		people_count: 1,
 		city_information: 'Capital of Netherlands',
-		landmarks: {
-			best_places_to_visit: ['Tower', 'City Center', 'Museum'],
-			img_url_of_landmarks: ['', '', ''],
-		},
+		landmarks: [
+			{
+				name: 'Tower',
+				description: 'Tower of Paris',
+				img_url: '',
+			},
+		],
 		events: [
 			{
 				name: 'eminem concert',
