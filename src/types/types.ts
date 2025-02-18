@@ -24,7 +24,7 @@ type Trips = {
 	is_booked_hotel: boolean;
 	people_count: number;
 	city_information: string;
-	landmarks: Landmarks;
+	landmarks: Landmark[];
 	events: Events[];
 	daily_expected_cost: number;
 };
@@ -42,7 +42,7 @@ type TripsTest = {
 	is_booked_hotel?: boolean;
 	people_count?: number;
 	city_information?: string;
-	landmarks?: Landmarks;
+	landmarks?: Landmark[];
 	events?: Events[];
 	daily_expected_cost?: number;
 };
@@ -52,14 +52,19 @@ type Checklist = {
 	trip_id?: string;
 	user_id?: string;
 	username:string;
-	items: string[];
+	items: ChecklistItem[];
+};
+
+type ChecklistItem = {
+	item: string;
+	completed: boolean;
 };
 type ChecklistTest = {
 	checklist_id?: string;
 	trip_id?: string;
 	user_id?: string;
 	username?:string;
-	items?: string[];
+	items?: ChecklistItem[];
 };
 
 type DailyExpectedCost = {
@@ -86,9 +91,10 @@ type Budget = {
 	destination_amount?: number;
 };
 
-type Landmarks = {
-	best_places_to_visit: string[];
-	img_url_of_landmarks: string[];
+type Landmark = {
+	name: string;
+	description: string;
+	img_url: string;
 };
 
 type Events = {
@@ -107,9 +113,10 @@ export {
 	Destination,
 	Weather,
 	Budget,
-	Landmarks,
+	Landmark,
 	Events,
 	UsersTest,
 	TripsTest,
-	ChecklistTest
+	ChecklistTest,
+	ChecklistItem
 };

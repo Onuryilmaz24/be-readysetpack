@@ -8,7 +8,7 @@ import {
 	Destination,
 	Weather,
 	Budget,
-	Landmarks,
+	Landmark,
 	Events,
 } from '../../types/types';
 
@@ -188,7 +188,6 @@ const seed = ({
 		
 			const checklistValues = checklistData.map(({ username, items }) => {
 				const user_id = usernameToUserId[username];
-				// trip_id'yi doğru eşleştirmek için kullanıcı ve trip'i eşleştiriyoruz
 				const trip_id = Object.keys(tripToUsername).find(
 					(key) => tripToUsername[key] === user_id
 				);

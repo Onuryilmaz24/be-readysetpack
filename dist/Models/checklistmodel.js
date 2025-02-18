@@ -16,14 +16,26 @@ exports.fetchSingleChecklist = fetchSingleChecklist;
 const addChecklist = (user_id, trip_id) => {
     const sqlText = `INSERT INTO checklist(user_id,trip_id,items) VALUES($1,$2,$3) RETURNING*;`;
     const items = [
-        'Check your passport',
-        'Print or download your tickets (flight/train/bus).',
-        'Pack comfortable T-shirts/tops.',
-        'Dont forget your pants/shorts/skirts.',
-        'Pack comfortable shoes for walking.',
-        'Pack your toothbrush and toothpaste.',
-        'Bring your phone charger.',
-        'Pack a power bank for emergencies.',
+        {
+            item: 'Check your passport',
+            completed: false,
+        },
+        {
+            item: 'Print or download your tickets (flight/train/bus).',
+            completed: false,
+        },
+        {
+            item: 'Pack comfortable T-shirts/tops.',
+            completed: false,
+        },
+        {
+            item: 'Bring your phone charger.',
+            completed: false,
+        },
+        {
+            item: 'Pack a power bank for emergencies.',
+            completed: false,
+        },
     ];
     const values = [user_id, trip_id, JSON.stringify(items)];
     return connection_1.default.query(sqlText, values).then(({ rows }) => {
@@ -32,30 +44,38 @@ const addChecklist = (user_id, trip_id) => {
 };
 exports.addChecklist = addChecklist;
 const addItemsToChecklist = (user_id, trip_id, postBody) => {
-    const values = [postBody, user_id, trip_id];
+    const newItem = {
+        item: postBody,
+        completed: false
+    };
     const sqlText = `
         UPDATE checklist
-        SET items = items || to_jsonb($1::text)
+        SET items = items || $1::jsonb
         WHERE user_id = $2 AND trip_id = $3
         RETURNING *;
     `;
+    const values = [JSON.stringify([newItem]), user_id, trip_id];
     return connection_1.default.query(sqlText, values).then(({ rows }) => {
         return rows[0];
     });
 };
 exports.addItemsToChecklist = addItemsToChecklist;
 const removeSingleItemFromItemsArray = (user_id, trip_id, deleteBody) => {
-    const values = [deleteBody, user_id, trip_id];
+    const itemToDelete = {
+        item: deleteBody,
+        completed: false
+    };
     const sqlText = `
     UPDATE checklist
     SET items = (
         SELECT jsonb_agg(elem)
         FROM jsonb_array_elements(items) AS elem
-        WHERE elem <> to_jsonb($1::text)
+        WHERE elem->>'item' <> $1
     )
     WHERE user_id = $2 AND trip_id = $3
     RETURNING *;
-  `;
+    `;
+    const values = [itemToDelete.item, user_id, trip_id];
     return connection_1.default.query(sqlText, values).then(({ rows }) => {
         return rows[0];
     });

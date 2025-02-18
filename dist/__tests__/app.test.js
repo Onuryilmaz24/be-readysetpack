@@ -340,10 +340,13 @@ describe("GET /api/trips/:user_id", () => {
                     is_booked_hotel: expect.any(Boolean),
                     people_count: expect.any(Number),
                     city_information: expect.any(String),
-                    landmarks: expect.objectContaining({
-                        best_places_to_visit: expect.any(Object),
-                        img_url_of_landmarks: expect.any(Object),
-                    }),
+                    landmarks: expect.arrayContaining([
+                        expect.objectContaining({
+                            name: expect.any(String),
+                            description: expect.any(String),
+                            img_url: expect.any(String),
+                        }),
+                    ]),
                     events: expect.arrayContaining([
                         expect.objectContaining({
                             venue: expect.any(String),
@@ -375,8 +378,8 @@ describe("POST /api/trips/:user_id", () => {
                 country: "NL",
                 currency: "EUR",
             },
-            start_date: "2025-01-18",
-            end_date: "2025-02-15",
+            start_date: "2025-02-20",
+            end_date: "2025-02-25",
             passport_issued_country: "GB",
             weather: {
                 temp: 25,
@@ -390,10 +393,6 @@ describe("POST /api/trips/:user_id", () => {
             },
             is_booked_hotel: false,
             people_count: 1,
-            landmarks: {
-                best_places_to_visit: ["Tower", "City Center", "Museum"],
-                img_url_of_landmarks: ["", "", ""],
-            },
             daily_expected_cost: 200,
         };
         return (0, supertest_1.default)(app_1.default)
@@ -426,10 +425,13 @@ describe("POST /api/trips/:user_id", () => {
                 is_booked_hotel: expect.any(Boolean),
                 people_count: expect.any(Number),
                 city_information: expect.any(String),
-                landmarks: expect.objectContaining({
-                    best_places_to_visit: expect.any(Object),
-                    img_url_of_landmarks: expect.any(Object),
-                }),
+                landmarks: expect.arrayContaining([
+                    expect.objectContaining({
+                        name: expect.any(String),
+                        description: expect.any(String),
+                        img_url: expect.any(String),
+                    }),
+                ]),
                 events: expect.arrayContaining([
                     expect.objectContaining({
                         venue: expect.any(String),
@@ -614,7 +616,7 @@ describe("PATCH /api/trips/:user_id/:trip_id", () => {
         });
     });
 });
-describe("GET /api/trips/:user_id/trip_id", () => {
+describe("GET /api/trips/:user_id/:trip_id", () => {
     test("200: Responds with a single trip for specified user", () => {
         return (0, supertest_1.default)(app_1.default)
             .get(`/api/trips/${user1.user_id}/${trip1.trip_id}`)
@@ -645,10 +647,13 @@ describe("GET /api/trips/:user_id/trip_id", () => {
                 is_booked_hotel: expect.any(Boolean),
                 people_count: expect.any(Number),
                 city_information: expect.any(String),
-                landmarks: expect.objectContaining({
-                    best_places_to_visit: expect.any(Object),
-                    img_url_of_landmarks: expect.any(Object),
-                }),
+                landmarks: expect.arrayContaining([
+                    expect.objectContaining({
+                        name: expect.any(String),
+                        description: expect.any(String),
+                        img_url: expect.any(String),
+                    }),
+                ]),
                 events: expect.arrayContaining([
                     expect.objectContaining({
                         venue: expect.any(String),
@@ -696,7 +701,12 @@ describe("GET /api/checklists/:user_id/:trip_id", () => {
                 checklist_id: expect.any(String),
                 trip_id: expect.any(String),
                 user_id: expect.any(String),
-                items: expect.any(Object),
+                items: expect.arrayContaining([
+                    expect.objectContaining({
+                        item: expect.any(String),
+                        completed: expect.any(Boolean),
+                    }),
+                ]),
             }));
         });
     });
@@ -743,7 +753,12 @@ describe("POST /api/checklists/:user_id/:trip_id", () => {
                 checklist_id: expect.any(String),
                 trip_id: expect.any(String),
                 user_id: expect.any(String),
-                items: expect.any(Object),
+                items: expect.arrayContaining([
+                    expect.objectContaining({
+                        item: expect.any(String),
+                        completed: expect.any(Boolean),
+                    }),
+                ]),
             }));
         });
     });
@@ -793,15 +808,15 @@ describe("PATCH /api/checklists/:user_id/:trip_id/", () => {
                 trip_id: expect.any(String),
                 user_id: expect.any(String),
                 items: [
-                    "Check your passport",
-                    "Print or download your tickets (flight/train/bus).",
-                    "Pack comfortable T-shirts/tops.",
-                    "Dont forget your pants/shorts/skirts.",
-                    "Pack comfortable shoes for walking.",
-                    "Pack your toothbrush and toothpaste.",
-                    "Bring your phone charger.",
-                    "Pack a power bank for emergencies.",
-                    "new item",
+                    { item: "Check your passport", completed: false },
+                    { item: "Print or download your tickets (flight/train/bus).", completed: false },
+                    { item: "Pack comfortable T-shirts/tops.", completed: false },
+                    { item: "Dont forget your pants/shorts/skirts.", completed: false },
+                    { item: "Pack comfortable shoes for walking.", completed: false },
+                    { item: "Pack your toothbrush and toothpaste.", completed: false },
+                    { item: "Bring your phone charger.", completed: false },
+                    { item: "Pack a power bank for emergencies.", completed: false },
+                    { item: "new item", completed: false },
                 ],
             });
         });
@@ -860,13 +875,13 @@ describe("PATCH /api/checklists/:user_id/:trip_id/delete-item (Deleting single i
                 trip_id: expect.any(String),
                 user_id: expect.any(String),
                 items: [
-                    "Print or download your tickets (flight/train/bus).",
-                    "Pack comfortable T-shirts/tops.",
-                    "Dont forget your pants/shorts/skirts.",
-                    "Pack comfortable shoes for walking.",
-                    "Pack your toothbrush and toothpaste.",
-                    "Bring your phone charger.",
-                    "Pack a power bank for emergencies.",
+                    { item: "Print or download your tickets (flight/train/bus).", completed: false },
+                    { item: "Pack comfortable T-shirts/tops.", completed: false },
+                    { item: "Dont forget your pants/shorts/skirts.", completed: false },
+                    { item: "Pack comfortable shoes for walking.", completed: false },
+                    { item: "Pack your toothbrush and toothpaste.", completed: false },
+                    { item: "Bring your phone charger.", completed: false },
+                    { item: "Pack a power bank for emergencies.", completed: false },
                 ],
             });
         });
