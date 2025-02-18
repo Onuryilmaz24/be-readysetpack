@@ -52,14 +52,19 @@ type Checklist = {
 	trip_id?: string;
 	user_id?: string;
 	username:string;
-	items: string[];
+	items: ChecklistItem[];
+};
+
+type ChecklistItem = {
+	item: string;
+	completed: boolean;
 };
 type ChecklistTest = {
 	checklist_id?: string;
 	trip_id?: string;
 	user_id?: string;
 	username?:string;
-	items?: string[];
+	items?: ChecklistItem[];
 };
 
 type DailyExpectedCost = {
@@ -112,5 +117,6 @@ export {
 	Events,
 	UsersTest,
 	TripsTest,
-	ChecklistTest
+	ChecklistTest,
+	ChecklistItem
 };

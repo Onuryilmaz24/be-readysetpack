@@ -616,7 +616,7 @@ describe("PATCH /api/trips/:user_id/:trip_id", () => {
         });
     });
 });
-describe("GET /api/trips/:user_id/trip_id", () => {
+describe("GET /api/trips/:user_id/:trip_id", () => {
     test("200: Responds with a single trip for specified user", () => {
         return (0, supertest_1.default)(app_1.default)
             .get(`/api/trips/${user1.user_id}/${trip1.trip_id}`)
@@ -701,7 +701,12 @@ describe("GET /api/checklists/:user_id/:trip_id", () => {
                 checklist_id: expect.any(String),
                 trip_id: expect.any(String),
                 user_id: expect.any(String),
-                items: expect.any(Object),
+                items: expect.arrayContaining([
+                    expect.objectContaining({
+                        item: expect.any(String),
+                        completed: expect.any(Boolean),
+                    }),
+                ]),
             }));
         });
     });
@@ -748,7 +753,12 @@ describe("POST /api/checklists/:user_id/:trip_id", () => {
                 checklist_id: expect.any(String),
                 trip_id: expect.any(String),
                 user_id: expect.any(String),
-                items: expect.any(Object),
+                items: expect.arrayContaining([
+                    expect.objectContaining({
+                        item: expect.any(String),
+                        completed: expect.any(Boolean),
+                    }),
+                ]),
             }));
         });
     });
@@ -798,15 +808,15 @@ describe("PATCH /api/checklists/:user_id/:trip_id/", () => {
                 trip_id: expect.any(String),
                 user_id: expect.any(String),
                 items: [
-                    "Check your passport",
-                    "Print or download your tickets (flight/train/bus).",
-                    "Pack comfortable T-shirts/tops.",
-                    "Dont forget your pants/shorts/skirts.",
-                    "Pack comfortable shoes for walking.",
-                    "Pack your toothbrush and toothpaste.",
-                    "Bring your phone charger.",
-                    "Pack a power bank for emergencies.",
-                    "new item",
+                    { item: "Check your passport", completed: false },
+                    { item: "Print or download your tickets (flight/train/bus).", completed: false },
+                    { item: "Pack comfortable T-shirts/tops.", completed: false },
+                    { item: "Dont forget your pants/shorts/skirts.", completed: false },
+                    { item: "Pack comfortable shoes for walking.", completed: false },
+                    { item: "Pack your toothbrush and toothpaste.", completed: false },
+                    { item: "Bring your phone charger.", completed: false },
+                    { item: "Pack a power bank for emergencies.", completed: false },
+                    { item: "new item", completed: false },
                 ],
             });
         });
@@ -865,13 +875,13 @@ describe("PATCH /api/checklists/:user_id/:trip_id/delete-item (Deleting single i
                 trip_id: expect.any(String),
                 user_id: expect.any(String),
                 items: [
-                    "Print or download your tickets (flight/train/bus).",
-                    "Pack comfortable T-shirts/tops.",
-                    "Dont forget your pants/shorts/skirts.",
-                    "Pack comfortable shoes for walking.",
-                    "Pack your toothbrush and toothpaste.",
-                    "Bring your phone charger.",
-                    "Pack a power bank for emergencies.",
+                    { item: "Print or download your tickets (flight/train/bus).", completed: false },
+                    { item: "Pack comfortable T-shirts/tops.", completed: false },
+                    { item: "Dont forget your pants/shorts/skirts.", completed: false },
+                    { item: "Pack comfortable shoes for walking.", completed: false },
+                    { item: "Pack your toothbrush and toothpaste.", completed: false },
+                    { item: "Bring your phone charger.", completed: false },
+                    { item: "Pack a power bank for emergencies.", completed: false },
                 ],
             });
         });
