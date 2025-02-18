@@ -5,6 +5,8 @@ import fetchExchangeRate from './utils/convert_currency';
 import visaCheck from './utils/visaCheck';
 import fetchEvents from './utils/ticket-master';
 import fetchLandmarks from './utils/google-places';
+import getMonthlyWeather from './utils/weather-service';
+
 export const fetchTripsByUserId = (
 	user_id: string,
 	sort_by: string = 'trip_id',
@@ -29,7 +31,6 @@ export const createTrip = async (user_id: string, postBody: Trips) => {
 		start_date,
 		end_date,
 		passport_issued_country,
-		weather,
 		budget,
 		is_booked_hotel,
 		people_count,
@@ -40,7 +41,11 @@ export const createTrip = async (user_id: string, postBody: Trips) => {
 	const visa_type = await visaCheck(destination.country,passport_issued_country)
 	const events = await fetchEvents(start_date,end_date,destination.city)
 	const landmarks = await fetchLandmarks(destination.city)
-
+	const predictedWeather = await getMonthlyWeather(
+		destination.city, 
+		start_date, 
+		end_date
+	);
 
 	const destination_amount = await fetchExchangeRate(
 		budget.current_currency,
@@ -54,7 +59,7 @@ export const createTrip = async (user_id: string, postBody: Trips) => {
 		start_date,
 		end_date,
 		passport_issued_country,
-		JSON.stringify(weather),
+		JSON.stringify(predictedWeather),
 		visa_type,
 		JSON.stringify({ ...budget, destination_amount: destination_amount }),
 		is_booked_hotel,
