@@ -20,7 +20,7 @@ const visaCheck_1 = __importDefault(require("./utils/visaCheck"));
 const ticket_master_1 = __importDefault(require("./utils/ticket-master"));
 const google_places_1 = __importDefault(require("./utils/google-places"));
 const weather_service_1 = __importDefault(require("./utils/weather-service"));
-const fetchTripsByUserId = (user_id, sort_by = 'trip_id', order = 'DESC') => {
+const fetchTripsByUserId = (user_id, sort_by = 'created_at', order = 'DESC') => {
     let sqlText = `SELECT * FROM trips WHERE user_id = $1 ORDER BY ${sort_by} ${order};`;
     const values = [user_id];
     return connection_1.default.query(sqlText, values).then(({ rows }) => {

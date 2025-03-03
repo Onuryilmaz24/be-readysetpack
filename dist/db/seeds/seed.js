@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const connection_1 = __importDefault(require("../connection"));
 const pg_format_1 = __importDefault(require("pg-format"));
+const timeStamp_1 = __importDefault(require("../../Models/utils/timeStamp"));
 const seed = ({ usersData, tripsData, costsData, checklistData, }) => {
     return connection_1.default
         .query(`DROP TABLE IF EXISTS checklist`)
@@ -49,7 +50,8 @@ const seed = ({ usersData, tripsData, costsData, checklistData, }) => {
                 city_information VARCHAR,
                 landmarks JSONB,
                 events JSONB,
-                daily_expected_cost INT NOT NULL
+                daily_expected_cost INT NOT NULL,
+				created_at TIMESTAMP DEFAULT NOW()
               );  
                 `);
     })
@@ -93,7 +95,8 @@ const seed = ({ usersData, tripsData, costsData, checklistData, }) => {
             acc[username] = user_id;
             return acc;
         }, {});
-        const tripValues = tripsData.map(({ username, destination, start_date, end_date, passport_issued_country, weather, visa_type, budget, is_booked_hotel, people_count, city_information, landmarks, events, daily_expected_cost, }) => [
+        const formattedTripData = tripsData.map(timeStamp_1.default);
+        const tripValues = formattedTripData.map(({ username, destination, start_date, end_date, passport_issued_country, weather, visa_type, budget, is_booked_hotel, people_count, city_information, landmarks, events, daily_expected_cost, created_at }) => [
             usernameToUserId[username],
             JSON.stringify(destination),
             start_date,
@@ -108,6 +111,7 @@ const seed = ({ usersData, tripsData, costsData, checklistData, }) => {
             JSON.stringify(landmarks),
             JSON.stringify(events),
             daily_expected_cost,
+            created_at
         ]);
         const insertTripsQueryStr = (0, pg_format_1.default)(`
                 INSERT INTO trips (user_id,
@@ -123,7 +127,8 @@ const seed = ({ usersData, tripsData, costsData, checklistData, }) => {
 					city_information,
 					landmarks,
 					events,
-					daily_expected_cost)
+					daily_expected_cost,
+					created_at)
                     VALUES %L
 					RETURNING *;
                 `, tripValues);

@@ -9,7 +9,7 @@ import getMonthlyWeather from './utils/weather-service';
 
 export const fetchTripsByUserId = (
 	user_id: string,
-	sort_by: string = 'trip_id',
+	sort_by: string = 'created_at',
 	order: string = 'DESC'
 ) => {
 	let sqlText: string = `SELECT * FROM trips WHERE user_id = $1 ORDER BY ${sort_by} ${order};`;

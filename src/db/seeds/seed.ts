@@ -11,6 +11,7 @@ import {
 	Landmark,
 	Events,
 } from '../../types/types';
+import timeStampConverter from '../../Models/utils/timeStamp';
 
 const seed = ({
 	usersData,
@@ -66,7 +67,8 @@ const seed = ({
                 city_information VARCHAR,
                 landmarks JSONB,
                 events JSONB,
-                daily_expected_cost INT NOT NULL
+                daily_expected_cost INT NOT NULL,
+				created_at TIMESTAMP DEFAULT NOW()
               );  
                 `);
 		})
@@ -119,7 +121,9 @@ const seed = ({
 				return acc;
 			}, {});
 
-			const tripValues = tripsData.map(
+			const formattedTripData = tripsData.map(timeStampConverter)
+
+			const tripValues = formattedTripData.map(
 				({
 					username,
 					destination,
@@ -135,6 +139,7 @@ const seed = ({
 					landmarks,
 					events,
 					daily_expected_cost,
+					created_at
 				}) => [
 					usernameToUserId[username],
 					JSON.stringify(destination),
@@ -150,6 +155,7 @@ const seed = ({
 					JSON.stringify(landmarks),
 					JSON.stringify(events),
 					daily_expected_cost,
+					created_at
 				]
 			);
 			const insertTripsQueryStr = format(
@@ -167,7 +173,8 @@ const seed = ({
 					city_information,
 					landmarks,
 					events,
-					daily_expected_cost)
+					daily_expected_cost,
+					created_at)
                     VALUES %L
 					RETURNING *;
                 `,

@@ -42,6 +42,7 @@ const tripsData: Trips[] = [
 			},
 		],
 		daily_expected_cost: 200,
+		created_at: "2025-03-03T13:09:26.075Z"
 	},
 	{
 		username: "matthew123",
@@ -83,6 +84,7 @@ const tripsData: Trips[] = [
 				event_url: ""}
 		],
 		daily_expected_cost: 200,
+		created_at: "2025-03-03T13:09:28.075Z"
 	},
 	{
 		username: "onur123",
@@ -125,6 +127,7 @@ const tripsData: Trips[] = [
 			},
 		],
 		daily_expected_cost: 200,
+		created_at: "2025-03-03T13:09:30.075Z"
 	},
 ];
 

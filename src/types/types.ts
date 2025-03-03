@@ -27,6 +27,7 @@ type Trips = {
 	landmarks: Landmark[];
 	events: Events[];
 	daily_expected_cost: number;
+	created_at: string;
 };
 type TripsTest = {
 	trip_id?: string;
@@ -105,6 +106,10 @@ type Events = {
 	img_url:string
 };
 
+type TripsWithDate = Omit<Trips,'created_at'> & {
+	created_at?: Date
+}
+
 export {
 	Users,
 	Trips,
@@ -118,5 +123,6 @@ export {
 	UsersTest,
 	TripsTest,
 	ChecklistTest,
-	ChecklistItem
+	ChecklistItem,
+	TripsWithDate
 };

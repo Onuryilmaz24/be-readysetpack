@@ -308,13 +308,14 @@ describe("GET /api/dailyCost/:country", () => {
     });
 });
 describe("GET /api/trips/:user_id", () => {
-    test("200: Responds with all trips for user ", () => {
+    test.only("200: Responds with all trips for user ", () => {
         return (0, supertest_1.default)(app_1.default)
             .get(`/api/trips/${user1.user_id}`)
             .expect(200)
             .then(({ body: { trips } }) => {
             expect(trips).toHaveLength(1);
             trips.forEach((trip) => {
+                console.log(trip);
                 expect(trip).toEqual(expect.objectContaining({
                     trip_id: expect.any(String),
                     user_id: expect.any(String),
