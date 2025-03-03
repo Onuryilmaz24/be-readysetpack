@@ -19,31 +19,30 @@ function getMonthlyWeather(city, start_date, end_date) {
         try {
             const geoResponse = yield axios_1.default.get(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`);
             if (!((_a = geoResponse.data.results) === null || _a === void 0 ? void 0 : _a[0])) {
-                throw new Error('City not found');
+                throw new Error("City not found");
             }
             const { latitude, longitude } = geoResponse.data.results[0];
             const startDate = new Date(start_date);
             const endDate = new Date(end_date);
-            const historicalStartDate = `${startDate.getFullYear() - 1}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')}`;
-            const historicalEndDate = `${endDate.getFullYear() - 1}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+            const historicalStartDate = `${startDate.getFullYear() - 1}-${String(startDate.getMonth() + 1).padStart(2, "0")}-${String(startDate.getDate()).padStart(2, "0")}`;
+            const historicalEndDate = `${endDate.getFullYear() - 1}-${String(endDate.getMonth() + 1).padStart(2, "0")}-${String(endDate.getDate()).padStart(2, "0")}`;
             const weatherResponse = yield axios_1.default.get(`https://archive-api.open-meteo.com/v1/archive?` +
                 `latitude=${latitude}&longitude=${longitude}` +
                 `&start_date=${historicalStartDate}&end_date=${historicalEndDate}` +
                 `&daily=temperature_2m_mean,weathercode&timezone=auto`);
             if (!((_b = weatherResponse.data.daily) === null || _b === void 0 ? void 0 : _b.temperature_2m_mean)) {
-                throw new Error('No weather data available');
+                throw new Error("No weather data available");
             }
-            const avgTemp = Math.round(weatherResponse.data.daily.temperature_2m_mean.reduce((a, b) => a + b, 0) /
-                weatherResponse.data.daily.temperature_2m_mean.length);
+            const avgTemp = Math.round(weatherResponse.data.daily.temperature_2m_mean.reduce((a, b) => a + b, 0) / weatherResponse.data.daily.temperature_2m_mean.length);
             const weatherCodes = weatherResponse.data.daily.weathercode;
             const dominantWeatherCode = getMostFrequentValue(weatherCodes);
             return {
                 temp: avgTemp || 20,
-                weather_type: getWeatherType(dominantWeatherCode)
+                weather_type: getWeatherType(dominantWeatherCode),
             };
         }
         catch (error) {
-            console.error('Error fetching weather data:', error);
+            console.error("Error fetching weather data:", error);
             const month = new Date(start_date).getMonth() + 1;
             if (month >= 6 && month <= 8) {
                 return { temp: 25, weather_type: "Warm and Sunny" };
@@ -53,7 +52,9 @@ function getMonthlyWeather(city, start_date, end_date) {
     });
 }
 function getMostFrequentValue(arr) {
-    return arr.sort((a, b) => arr.filter(v => v === a).length - arr.filter(v => v === b).length).pop();
+    const frequencyMap = new Map();
+    arr.forEach((num) => frequencyMap.set(num, (frequencyMap.get(num) || 0) + 1));
+    return [...frequencyMap.entries()].reduce((max, curr) => curr[1] > max[1] ? curr : max)[0];
 }
 function getWeatherType(code) {
     if (code === 0)

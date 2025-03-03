@@ -378,13 +378,9 @@ describe("POST /api/trips/:user_id", () => {
                 country: "NL",
                 currency: "EUR",
             },
-            start_date: "2025-02-20",
-            end_date: "2025-02-25",
+            start_date: "2025-03-20",
+            end_date: "2025-03-25",
             passport_issued_country: "GB",
-            weather: {
-                temp: 25,
-                weather_type: "Cloudly",
-            },
             visa_type: "eVisa",
             budget: {
                 current_amount: 3000,
