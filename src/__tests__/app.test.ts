@@ -861,15 +861,18 @@ describe("PATCH /api/checklists/:user_id/:trip_id/", () => {
           trip_id: expect.any(String),
           user_id: expect.any(String),
           items: [
-            {item:"Check your passport", completed:false},
-            {item:"Print or download your tickets (flight/train/bus).", completed:false},
-            {item:"Pack comfortable T-shirts/tops.", completed:false},
-            {item:"Dont forget your pants/shorts/skirts.", completed:false},
-            {item:"Pack comfortable shoes for walking.", completed:false},
-            {item:"Pack your toothbrush and toothpaste.", completed:false},
-            {item:"Bring your phone charger.", completed:false},
-            {item:"Pack a power bank for emergencies.", completed:false},
-            {item:"new item", completed:false},
+            { item: "Check your passport", completed: false },
+            {
+              item: "Print or download your tickets (flight/train/bus).",
+              completed: false,
+            },
+            { item: "Pack comfortable T-shirts/tops.", completed: false },
+            { item: "Dont forget your pants/shorts/skirts.", completed: false },
+            { item: "Pack comfortable shoes for walking.", completed: false },
+            { item: "Pack your toothbrush and toothpaste.", completed: false },
+            { item: "Bring your phone charger.", completed: false },
+            { item: "Pack a power bank for emergencies.", completed: false },
+            { item: "new item", completed: false },
           ],
         });
       });
@@ -928,14 +931,17 @@ describe("PATCH /api/checklists/:user_id/:trip_id/delete-item (Deleting single i
           checklist_id: expect.any(String),
           trip_id: expect.any(String),
           user_id: expect.any(String),
-          items: [  
-            {item:"Print or download your tickets (flight/train/bus).", completed:false},
-            {item:"Pack comfortable T-shirts/tops.", completed:false},
-            {item:"Dont forget your pants/shorts/skirts.", completed:false},
-            {item:"Pack comfortable shoes for walking.", completed:false},
-            {item:"Pack your toothbrush and toothpaste.", completed:false},
-            {item:"Bring your phone charger.", completed:false},
-            {item:"Pack a power bank for emergencies.", completed:false},
+          items: [
+            {
+              item: "Print or download your tickets (flight/train/bus).",
+              completed: false,
+            },
+            { item: "Pack comfortable T-shirts/tops.", completed: false },
+            { item: "Dont forget your pants/shorts/skirts.", completed: false },
+            { item: "Pack comfortable shoes for walking.", completed: false },
+            { item: "Pack your toothbrush and toothpaste.", completed: false },
+            { item: "Bring your phone charger.", completed: false },
+            { item: "Pack a power bank for emergencies.", completed: false },
           ],
         });
       });
@@ -975,6 +981,76 @@ describe("PATCH /api/checklists/:user_id/:trip_id/delete-item (Deleting single i
     return request(app)
       .patch("/api/checklists/1/abc")
       .send(deleteChecklistItem)
+      .expect(400)
+      .then((response: Response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("PATCH /api/checklists/:user_id/:trip_id/change-status", () => {
+  test("200: Should patch checklist items ", () => {
+    const inputChecklistItem = { newItem: "Check your passport" };
+    return request(app)
+      .patch(`/api/checklists/${user1.user_id}/${trip1.trip_id}/change-status`)
+      .send(inputChecklistItem)
+      .expect(200)
+      .then(({ body: { checklist } }: { body: { checklist: Checklist } }) => {
+        expect(checklist).toEqual({
+          checklist_id: expect.any(String),
+          trip_id: expect.any(String),
+          user_id: expect.any(String),
+          items: [
+            { item: "Check your passport", completed: true },
+            {
+              item: "Print or download your tickets (flight/train/bus).",
+              completed: false,
+            },
+            { item: "Pack comfortable T-shirts/tops.", completed: false },
+            { item: "Dont forget your pants/shorts/skirts.", completed: false },
+            { item: "Pack comfortable shoes for walking.", completed: false },
+            { item: "Pack your toothbrush and toothpaste.", completed: false },
+            { item: "Bring your phone charger.", completed: false },
+            { item: "Pack a power bank for emergencies.", completed: false },
+          ],
+        });
+      });
+  });
+  test("400: Should return an error msg if user id does not exist ", () => {
+    const inputChecklistItem = { newItem: "new item" };
+    return request(app)
+      .patch("/api/checklists/10/1")
+      .send(inputChecklistItem)
+      .expect(400)
+      .then((response: Response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: Should return an error msg if trip id does not exist ", () => {
+    const inputChecklistItem = { newItem: "new item" };
+    return request(app)
+      .patch("/api/checklists/1/10")
+      .send(inputChecklistItem)
+      .expect(400)
+      .then((response: Response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: Should return an error msg if user id is string ", () => {
+    const inputChecklistItem = { newItem: "new item" };
+    return request(app)
+      .patch("/api/checklists/abc/1")
+      .send(inputChecklistItem)
+      .expect(400)
+      .then((response: Response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: Should return an error msg if trip id is string ", () => {
+    const inputChecklistItem = { newItem: "new item" };
+    return request(app)
+      .patch("/api/checklists/1/abc")
+      .send(inputChecklistItem)
       .expect(400)
       .then((response: Response) => {
         expect(response.body.msg).toBe("Bad Request");

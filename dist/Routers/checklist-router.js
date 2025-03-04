@@ -10,5 +10,6 @@ checklistRouter.get("/:user_id/:trip_id", checklistcontroller_1.getSingleCheckli
 checklistRouter.post("/:user_id/:trip_id", checklistcontroller_1.postChecklist);
 checklistRouter.patch("/:user_id/:trip_id", checklistcontroller_1.updateChecklistItems);
 checklistRouter.patch("/:user_id/:trip_id/delete-item", checklistcontroller_1.deleteSingleItemFromItems);
+checklistRouter.patch("/:user_id/:trip_id/change-status", checklistcontroller_1.updateItemCompleted);
 checklistRouter.delete("/:user_id/:trip_id", checklistcontroller_1.removeEntireChecklist);
 exports.default = checklistRouter;
