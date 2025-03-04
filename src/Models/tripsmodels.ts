@@ -38,7 +38,7 @@ export const createTrip = async (user_id: string, postBody: Trips) => {
 	} = postBody;
 
 	const cityInfo = await fetchCityInfo(destination.city);
-	const visa_type = await visaCheck(destination.country,passport_issued_country)
+	const visa_type = destination.country === passport_issued_country ?  await visaCheck(destination.country,passport_issued_country) : "Visa Free"
 	const events = await fetchEvents(start_date,end_date,destination.city)
 	const landmarks = await fetchLandmarks(destination.city)
 	const predictedWeather = await getMonthlyWeather(

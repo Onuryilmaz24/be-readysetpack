@@ -35,7 +35,7 @@ const createTrip = (user_id, postBody) => __awaiter(void 0, void 0, void 0, func
 	`;
     const { destination, start_date, end_date, passport_issued_country, budget, is_booked_hotel, people_count, daily_expected_cost, } = postBody;
     const cityInfo = yield (0, fetch_city_info_1.default)(destination.city);
-    const visa_type = yield (0, visaCheck_1.default)(destination.country, passport_issued_country);
+    const visa_type = destination.country === passport_issued_country ? yield (0, visaCheck_1.default)(destination.country, passport_issued_country) : "Visa Free";
     const events = yield (0, ticket_master_1.default)(start_date, end_date, destination.city);
     const landmarks = yield (0, google_places_1.default)(destination.city);
     const predictedWeather = yield (0, weather_service_1.default)(destination.city, start_date, end_date);
