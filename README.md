@@ -6,7 +6,7 @@ Hello, this is a the backend repo of Ready Set Pack Project.
 
 ## Hosted Version
 
- -- https://be-readysetpack.onrender.com/api
+ -- [Here](https://readysetpack.onrender.com/api)
  
   (note: spin-up period may take couple of minutes )
 ---
